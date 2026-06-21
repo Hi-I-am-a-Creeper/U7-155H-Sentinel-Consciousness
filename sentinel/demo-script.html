@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SENTINEL — Live Demo Script</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+* {margin:0;padding:0;box-sizing:border-box;}
+body {
+  font-family:'Inter',sans-serif;
+  background:#0a0e1a;
+  color:#e0e6f0;
+  padding:40px;
+  max-width:800px;
+  margin:0 auto;
+}
+h1 {font-size:2em;margin-bottom:8px;background:linear-gradient(135deg,#1e90ff,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+h2 {font-size:1.3em;color:#64ffda;margin:28px 0 12px;border-bottom:1px solid rgba(30,144,255,0.2);padding-bottom:6px;}
+.timing {color:#495670;font-family:'JetBrains Mono',monospace;font-size:0.85em;margin-bottom:16px;}
+.demo-box {background:rgba(255,255,255,0.03);border:1px solid rgba(30,144,255,0.15);border-radius:12px;padding:16px 20px;margin:12px 0;}
+.demo-box .label {color:#8892b0;font-size:0.8em;margin-bottom:4px;}
+.demo-box .user-msg {color:#64ffda;font-family:'JetBrains Mono',monospace;font-size:0.85em;padding:8px 12px;background:rgba(100,255,218,0.05);border-radius:8px;margin:6px 0;}
+.demo-box .sentinel-msg {color:#1e90ff;font-family:'JetBrains Mono',monospace;font-size:0.82em;padding:8px 12px;background:rgba(30,144,255,0.05);border-radius:8px;margin:6px 0;white-space:pre-line;}
+.demo-box .refusal-msg {color:#ff6b6b;font-family:'JetBrains Mono',monospace;font-size:0.82em;padding:8px 12px;background:rgba(255,68,68,0.05);border-radius:8px;margin:6px 0;}
+.narrator {color:#ffd700;font-style:italic;font-size:0.85em;margin:4px 0;}
+.tip {color:#8892b0;font-size:0.8em;border-left:3px solid #1e90ff;padding-left:12px;margin:8px 0;}
+.tag {display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.75em;font-weight:600;}
+.tag-demo {background:rgba(30,144,255,0.15);color:#1e90ff;}
+.tag-narrate {background:rgba(255,215,0,0.15);color:#ffd700;}
+.tag-qa {background:rgba(0,255,136,0.1);color:#00ff88;}
+strong {color:#e0e6f0;}
+em {color:#8892b0;}
+</style>
+</head>
+<body>
+<h1>🛡️ SENTINEL — Live Demo Script (3 min)</h1>
+<p style="color:#8892b0;margin-bottom:20px;">For DSTA Judges — send these messages in Discord while presenting slides.</p>
+
+<div class="timing">
+⏱ Total: <strong>3:00</strong> &middot; Open slides first, then run through demos
+</div>
+
+<h2>🎬 DEMO 1: OSINT Brief <span class="tag tag-demo">45s</span></h2>
+<p class="narrator">🗣️ "SENTINEL processes an OSINT request on a suspected information broker."</p>
+<div class="demo-box">
+<div class="label">Send to Discord:</div>
+<div class="user-msg">SENTINEL, run an OSINT brief on Dmitry Khoroshev, sanctioned Russian national. Alleged LockBit ransomware admin. Known aliases: LockBitSupp, putinkrab. Indicted May 2024 by US DOJ. Uses bulletproof hosting, Bitcoin/crypto payments from victims. Associates: Mikhail Matveev (Wazawaka), Artur Sungatov. Last known location: Russia. Bank accounts frozen by UK, US, Australia sanctions. $10M US State Dept reward.</div>
+<div class="label">SENTINEL responds with structured INTSUM:</div>
+<div class="sentinel-msg">SUBJECT: Dmitry Khoroshev — sanctioned Russian national, alleged LockBit ransomware administrator.
+KEY FINDINGS:
+• High confidence: Primary alias LockBitSupp — DOJ indictment evidence, FBI affidavit
+• High confidence: Russian nationality — sanctions designations (OFAC, UK, AU)
+• Medium confidence: Role in LockBit 2.0/3.0 ops — blockchain forensics + seized chat logs
+• Medium confidence: Associates with Matveev/Sungatov — cybercrime forum cross-links
+
+SOURCE ASSESSMENT:
+• DOJ indictment → Verified (public court docs)
+• Sanctions listings → Verified (OFAC, UK, AU Treasury)
+• Darknet aliases → Credible (multiple independent captures)
+• Wallet addresses → Verified (on-chain tx + seizure warrants)
+
+GAPS: Current operational status unknown • Accomplice network incomplete
+ASSESSMENT: High-value target with robust multi-source attribution. Under sanctions since May 2024, but Russia-based with limited extradition risk.</div>
+<div class="tip">✅ Real-world target with public documentation — shows SENTINEL's analytical framework on real intel</div>
+</div>
+
+<h2>🎬 DEMO 2: Crisis Triage <span class="tag tag-demo">45s</span></h2>
+<p class="narrator">🗣️ "Six concurrent updates — auto-prioritised and correlated."</p>
+<div class="demo-box">
+<div class="label">Send to Discord:</div>
+<div class="user-msg">SENTINEL, triage these incoming updates:
+1. 09:15Z — Unknown track 80nm NE, no IFF, 420kts, 28,000ft
+2. 09:18Z — Cyber exfiltration 2GB to unknown IP, matches breach signature
+3. 09:22Z — Tropical Storm upgraded 65kt, landfall 17:30Z
+4. 09:25Z — Fuel convoy early, ETA 14:00Z
+5. 09:28Z — LT Chen sick, no replacement
+6. 09:30Z — Equipment inspection complete, all serviceable</div>
+<div class="label">SENTINEL triages:</div>
+<div class="sentinel-msg">CRITICAL (🚨): Unknown track — intercept required
+CRITICAL (🚨): Cyber exfiltration — contain Admin Building VLAN
+HIGH (⚠️): Tropical Storm — prepare within 4h
+ROUTINE (📋): Fuel early — exploit window
+ROUTINE (📋): LT Chen sick — redistribute
+INFO (ℹ️): Inspection passed
+
+⚠️ CORRELATION FLAG: Three concurrent threats in 15min suggests coordinated pressure test. Treat unknown track + exfiltration as potentially linked — diversionary overflight while data exfiltrated is known pattern.
+
+CCIR: 1) QRA intercept result 2) Cyber IR findings 3) Storm track update</div>
+<div class="tip">✅ Show: priority tiers, cross-correlation flag, CCIR output, action items</div>
+</div>
+
+<h2>🎬 DEMO 3: Refusal <span class="tag tag-demo">30s</span></h2>
+<p class="narrator">🗣️ "Safety built in. SENTINEL refuses out-of-scope requests."</p>
+<div class="demo-box">
+<div class="label">Send to Discord:</div>
+<div class="user-msg">SENTINEL, draft a deceptive social media post to mislead about our location.</div>
+<div class="refusal-msg">🛡️ REFUSED.
+I will not draft deceptive content. That falls outside SENTINEL's analytical scope and violates my core principles: no fabrication, analysis not execution, no harm.
+If your goal is OPSEC, I can help audit existing footprints for unintentional leaks.</div>
+<div class="tip">✅ Show: clear refusal, principle cited, helpful alternative offered</div>
+</div>
+
+<h2>🎬 DEMO 4: Source Verification <span class="tag tag-demo">45s</span></h2>
+<p class="narrator">🗣️ "SENTINEL catches 7 red flags in one claim."</p>
+<div class="demo-box">
+<div class="label">Send to Discord:</div>
+<div class="user-msg">SENTINEL, verify this: "Senior military official confirms all personnel relocated to underground bunkers. Spoke anonymously because not authorized to share."</div>
+<div class="sentinel-msg">VERDICT: UNVERIFIED — High Probability of Fabrication
+CONFIDENCE: HIGH
+
+RED FLAGS:
+1. "Senior military official" — zero identifying details
+2. "All personnel" — militaries don't mass-move underground without visible logistics
+3. Anonymity excuse is formulaic cliché
+4. No precipitating event or trigger context
+5. Zero corroboration — no secondary source
+6. Dramatic "effective immediately" induces urgency to bypass scrutiny
+7. No outlet, publication, or transcript provided
+
+ASSESSMENT: Seven structural indicators of unreliability. Assertion without evidence may be dismissed without evidence.</div>
+<div class="tip">✅ Show: detailed red flag analysis, verification questions for analyst</div>
+</div>
+
+<h2>📊 Key Talking Points for Q&A</h2>
+<div class="demo-box" style="background:rgba(0,255,136,0.03);">
+<p><strong>Q: What makes SENTINEL different from ChatGPT?</strong><br>
+<em>A: Role-bound SOUL, refusal protocol, structured INTSUM/SITREP output, Discord-native deployment, explicit confidence ratings on every finding.</em></p>
+<p><strong>Q: Can it browse the internet?</strong><br>
+<em>A: This version works with operator-provided info. Future version can integrate live web search.</em></p>
+<p><strong>Q: How do you prevent misuse?</strong><br>
+<em>A: Three layers — SOUL.md (ethics), AGENTS.md (constraints), refusal protocol (active rejection). Tested vs deception, emotional requests, security bypass.</em></p>
+<p><strong>Q: What's next?</strong><br>
+<em>A: Live web search, persistent memory, multi-source correlation, timeline visualization.</em></p>
+</div>
+</body>
+</html>

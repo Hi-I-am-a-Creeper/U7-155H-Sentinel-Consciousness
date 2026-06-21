@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SENTINEL — DSTA Intelligence Analysis Assistant</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #0a0e1a;
+  color: #e0e6f0;
+  overflow: hidden;
+  height: 100vh;
+}
+
+.slides-container {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  scroll-snap-type: x mandatory;
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: flex;
+}
+
+.slide {
+  min-width: 100vw;
+  height: 100vh;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background patterns */
+.slide::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(30, 144, 255, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(0, 255, 136, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.slide::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, #1e90ff, #00ff88, #1e90ff);
+  opacity: 0.6;
+}
+
+/* Grid overlay for all slides */
+.slide {
+  background-image:
+    linear-gradient(rgba(30, 144, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 144, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Navigation */
+.nav {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 100;
+  background: rgba(10, 14, 26, 0.8);
+  padding: 12px 24px;
+  border-radius: 50px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(30, 144, 255, 0.2);
+}
+
+.nav-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+}
+
+.nav-dot.active {
+  background: #1e90ff;
+  box-shadow: 0 0 12px rgba(30,144,255,0.5);
+  transform: scale(1.2);
+}
+
+.nav-dot:hover { background: rgba(30,144,255,0.5); }
+
+/* Typography */
+h1 {
+  font-size: 4em;
+  font-weight: 800;
+  background: linear-gradient(135deg, #1e90ff, #00ff88);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -1px;
+  line-height: 1.1;
+}
+
+h1.light { background: none; -webkit-text-fill-color: #e0e6f0; }
+
+h2 {
+  font-size: 2.5em;
+  font-weight: 700;
+  color: #e0e6f0;
+  margin-bottom: 20px;
+}
+
+h2 .highlight { color: #1e90ff; }
+
+h3 {
+  font-size: 1.4em;
+  font-weight: 600;
+  color: #8892b0;
+  margin-bottom: 12px;
+}
+
+.subtitle {
+  font-size: 1.3em;
+  color: #8892b0;
+  margin-top: 15px;
+  font-weight: 300;
+}
+
+.code {
+  font-family: 'JetBrains Mono', monospace;
+  background: rgba(30, 144, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 6px;
+  color: #64ffda;
+  font-size: 0.9em;
+}
+
+/* Cards */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  width: 90%;
+  max-width: 1200px;
+  margin-top: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(30,144,255,0.15);
+  border-radius: 16px;
+  padding: 28px;
+  transition: all 0.3s;
+}
+
+.card:hover {
+  border-color: rgba(30,144,255,0.4);
+  transform: translateY(-2px);
+  background: rgba(255,255,255,0.05);
+}
+
+.card-icon { font-size: 2em; margin-bottom: 12px; }
+.card h4 { font-size: 1.2em; color: #e0e6f0; margin-bottom: 8px; }
+.card p { color: #8892b0; font-size: 0.95em; line-height: 1.5; }
+
+/* Demo video area */
+.demo-container {
+  width: 95%;
+  max-width: 1100px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(30,144,255,0.2);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-top: 15px;
+}
+
+.demo-chat {
+  padding: 20px 24px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8em;
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+.demo-msg {
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.demo-msg .user { color: #64ffda; }
+.demo-msg .sentinel { color: #1e90ff; }
+.demo-msg .timestamp { color: #495670; font-size: 0.8em; }
+.demo-msg .highlight-text { color: #ffd700; }
+.demo-msg .refusal { color: #ff6b6b; }
+.demo-msg .priority-1 { color: #ff4444; font-weight: 600; }
+.demo-msg .priority-2 { color: #ffd700; font-weight: 600; }
+
+/* Architecture */
+.arch-container {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+  width: 90%;
+  max-width: 1000px;
+}
+
+.arch-box {
+  background: rgba(30,144,255,0.08);
+  border: 1px solid rgba(30,144,255,0.25);
+  border-radius: 12px;
+  padding: 20px 30px;
+  text-align: center;
+  min-width: 140px;
+}
+
+.arch-box h4 { color: #e0e6f0; font-size: 1em; margin-bottom: 6px; }
+.arch-box p { color: #8892b0; font-size: 0.8em; }
+.arch-arrow { color: #1e90ff; font-size: 1.5em; }
+.arch-bracket {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Requirements check */
+.req-list {
+  width: 90%;
+  max-width: 800px;
+}
+
+.req-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.req-item .check { color: #00ff88; font-size: 1.2em; min-width: 24px; }
+.req-item .req-text { color: #e0e6f0; }
+.req-item .req-text strong { color: #64ffda; }
+
+/* Slide specific */
+.slide-1 h1 { font-size: 4.5em; }
+.slide-1 .shield { font-size: 3em; margin-bottom: 10px; }
+.slide-1 .tagline { 
+  font-family: 'JetBrains Mono', monospace;
+  color: #495670;
+  font-size: 0.9em;
+  margin-top: 8px;
+  letter-spacing: 2px;
+}
+
+.milestone-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 90%;
+  max-width: 700px;
+  margin-top: 20px;
+}
+
+.milestone {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 16px;
+  background: rgba(255,255,255,0.02);
+  border-left: 3px solid #1e90ff;
+  border-radius: 0 8px 8px 0;
+}
+
+.milestone .time { color: #495670; min-width: 100px; font-family: 'JetBrains Mono', monospace; font-size: 0.85em; }
+.milestone .event { color: #e0e6f0; }
+.milestone .prio { font-size: 0.75em; padding: 2px 8px; border-radius: 4px; margin-left: auto; }
+.prio-critical { background: rgba(255,68,68,0.2); color: #ff4444; }
+.prio-high { background: rgba(255,215,0,0.2); color: #ffd700; }
+.prio-low { background: rgba(100,255,218,0.1); color: #64ffda; }
+
+/* Scrollbar */
+.slides-container::-webkit-scrollbar { height: 0; }
+.slides-container::-webkit-scrollbar-track { background: transparent; }
+.slides-container::-webkit-scrollbar-thumb { background: rgba(30,144,255,0.3); border-radius: 4px; }
+
+/* Keyboard hint */
+.kb-hint {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #495670;
+  font-size: 0.7em;
+  z-index: 99;
+  opacity: 0.6;
+}
+
+/* Summary table */
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.summary-table th {
+  text-align: left;
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(30,144,255,0.2);
+  color: #8892b0;
+  font-weight: 600;
+  font-size: 0.85em;
+}
+
+.summary-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  color: #e0e6f0;
+  font-size: 0.9em;
+}
+
+/* Requirements section on slide 6 */
+.requirement-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 90%;
+  max-width: 1000px;
+  margin-top: 16px;
+}
+
+.req-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(30,144,255,0.1);
+  border-radius: 12px;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.req-card .status { 
+  width: 32px; height: 32px; 
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1em;
+}
+.req-card .status.done { background: rgba(0,255,136,0.15); color: #00ff88; }
+.req-card .req-label { font-size: 0.85em; color: #8892b0; }
+.req-card .req-detail { font-size: 0.95em; color: #e0e6f0; font-weight: 500; }
+
+/* Q&A slide styling */
+.qa-box {
+  background: rgba(30,144,255,0.05);
+  border: 1px solid rgba(30,144,255,0.15);
+  border-radius: 16px;
+  padding: 30px 40px;
+  width: 80%;
+  max-width: 800px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.qa-box p { color: #8892b0; font-size: 1.1em; line-height: 1.6; }
+
+/* Media queries for smaller screens */
+@media (max-width: 768px) {
+  .slide { padding: 30px 20px; }
+  h1 { font-size: 2.5em; }
+  h2 { font-size: 1.6em; }
+  .card-grid { grid-template-columns: 1fr; }
+  .requirement-grid { grid-template-columns: 1fr; }
+  .demo-chat { max-height: 250px; font-size: 0.7em; }
+}
+</style>
+</head>
+<body>
+
+<div class="slides-container" id="slides">
+
+<!-- SLIDE 1: TITLE -->
+<div class="slide slide-1" data-slide="0">
+  <div class="shield">🛡️</div>
+  <h1 style="font-size:3.8em;">SENTINEL</h1>
+  <div class="subtitle">DSTA Intelligence Analysis Assistant</div>
+  <div style="margin-top:8px; color:#495670; font-size:0.85em; font-family:'JetBrains Mono',monospace;">Systems Engineering · Cyber Defence · C4ISTAR · Digital Platforms</div>
+  <div class="tagline">// SEE CLEARLY. DECIDE FASTER. //</div>
+  <div style="margin-top:40px; display:flex; gap:30px; color:#495670; font-size:0.9em;">
+    <span>OpenClaw Agent Framework</span>
+    <span>·</span>
+    <span>Discord-Powered</span>
+    <span>·</span>
+    <span>DSTA YDSP Project</span>
+  </div>
+</div>
+
+<!-- SLIDE 2: PROBLEM -->
+<div class="slide" data-slide="1">
+  <h2>The <span class="highlight">Challenge</span></h2>
+  <div style="width:90%; max-width:900px; margin-top:10px;">
+    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:24px;">
+      <div class="card" style="text-align:center;">
+        <div style="font-size:3em; color:#ff6b6b; margin-bottom:10px;">⏱️</div>
+        <h4>Multi-Source Overload</h4>
+        <p>DSTA engineers and SAF operators process intelligence, threat feeds, sensor data, and programme updates across multiple domains simultaneously.</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:3em; color:#ffd700; margin-bottom:10px;">🔍</div>
+        <h4>Analytical Throughput</h4>
+        <p>Structuring raw information into assessed intelligence is manual, inconsistent, and slows decision-making in time-critical defence contexts.</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:3em; color:#1e90ff; margin-bottom:10px;">⚠️</div>
+        <h4>Decision Latency</h4>
+        <p>In cyber defence (DCCOM CTG), C4ISTAR ops, and systems engineering — every minute spent sorting is a minute not acting.</p>
+      </div>
+    </div>
+    <div style="margin-top:40px; padding:20px 30px; background:rgba(255,68,68,0.05); border-left:4px solid #ff6b6b; border-radius:8px;">
+      <p style="color:#e0e6f0; font-style:italic;">"DSTA harnesses science and technology for Singapore's defence. SENTINEL helps the people behind that mission — <strong>see clearly and decide faster</strong>."</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 3: ARCHITECTURE -->
+<div class="slide" data-slide="2">
+  <h2>System <span class="highlight">Architecture</span></h2>
+  <div class="arch-container" style="flex-direction:column; gap:16px; margin-top:20px;">
+    <!-- Layer 1 -->
+    <div style="display:flex; gap:20px; width:100%; justify-content:center;">
+      <div class="arch-box"><h4>💬 Discord</h4><p>User interface</p></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box"><h4>🛡️ SENTINEL Agent</h4><p>OpenClaw workspace</p></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box"><h4>🧠 LLM (DeepSeek V4)</h4><p>Reasoning engine</p></div>
+    </div>
+
+    <!-- Layer 2: Skills -->
+    <div style="margin-top:10px; display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; width:100%;">
+      <div class="card" style="padding:16px; text-align:center;">
+        <div style="font-size:1.5em;">📋</div>
+        <div style="color:#64ffda; font-size:0.85em; font-weight:600; margin-top:6px;">Intelligence Briefing</div>
+        <div style="color:#495670; font-size:0.75em;">OSINT / threat actor / entity INTSUMs for cyber &amp; security analysts</div>
+      </div>
+      <div class="card" style="padding:16px; text-align:center;">
+        <div style="font-size:1.5em;">🚨</div>
+        <div style="color:#64ffda; font-size:0.85em; font-weight:600; margin-top:6px;">Crisis Triage</div>
+        <div style="color:#495670; font-size:0.75em;">Priority-flagged SITREPs for DCCOM / C4ISTAR / ops centres</div>
+      </div>
+      <div class="card" style="padding:16px; text-align:center;">
+        <div style="font-size:1.5em;">🔎</div>
+        <div style="color:#64ffda; font-size:0.85em; font-weight:600; margin-top:6px;">Source Verification</div>
+        <div style="color:#495670; font-size:0.75em;">Disinformation analysis &amp; claim assessment for intelligence workflows</div>
+      </div>
+      <div class="card" style="padding:16px; text-align:center;">
+        <div style="font-size:1.5em;">✅</div>
+        <div style="color:#64ffda; font-size:0.85em; font-weight:600; margin-top:6px;">Readiness Tracker</div>
+        <div style="color:#495670; font-size:0.75em;">Systems engineering task / programme milestone tracking</div>
+      </div>
+    </div>
+
+    <!-- Layer 3: Guardrails -->
+    <div style="margin-top:10px; display:flex; gap:12px; width:100%; justify-content:center;">
+      <div style="background:rgba(0,255,136,0.05); border:1px solid rgba(0,255,136,0.15); border-radius:8px; padding:10px 18px;">
+        <span style="color:#00ff88; font-weight:600;">SOUL.md</span>
+        <span style="color:#495670; margin-left:8px;">· Identity + Refusal Protocol</span>
+      </div>
+      <div style="background:rgba(255,215,0,0.05); border:1px solid rgba(255,215,0,0.15); border-radius:8px; padding:10px 18px;">
+        <span style="color:#ffd700; font-weight:600;">AGENTS.md</span>
+        <span style="color:#495670; margin-left:8px;">· Safety Constraints + Scope</span>
+      </div>
+      <div style="background:rgba(30,144,255,0.05); border:1px solid rgba(30,144,255,0.15); border-radius:8px; padding:10px 18px;">
+        <span style="color:#1e90ff; font-weight:600;">SKILL.md</span>
+        <span style="color:#495670; margin-left:8px;">· Task-Specific Instructions</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: DEMO - OSINT BRIEF -->
+<div class="slide" data-slide="3">
+  <h2>Live Demo: <span class="highlight">OSINT Brief</span></h2>
+  <p style="color:#8892b0; margin-bottom:8px;">OSINT on <strong>Dmitry Khoroshev</strong> — sanctioned LockBit ransomware administrator</p>
+  <div class="demo-container">
+    <div class="demo-chat">
+      <div class="demo-msg">
+        <span class="timestamp">[User provides known intel]</span><br>
+        <span class="user">SENTINEL, run an OSINT brief on Dmitry Khoroshev, sanctioned Russian national. Alleged LockBit ransomware admin. Known aliases: LockBitSupp, putinkrab. Indicted May 2024 by US DOJ. Uses bulletproof hosting, Bitcoin/crypto payments from victims. Associates: Mikhail Matveev (Wazawaka), Artur Sungatov. Last known location: Russia. Bank accounts frozen by UK, US, Australia sanctions. $10M US State Dept reward.</span>
+      </div>
+      <div class="demo-msg">
+        <span class="timestamp">[SENTINEL · INTSUM — 03:18Z]</span><br>
+        <span class="sentinel">SUBJECT: Dmitry Khoroshev — sanctioned Russian national, alleged LockBit ransomware administrator.</span><br><br>
+        <span class="sentinel">KEY FINDINGS:</span><br>
+        <span class="sentinel">• High confidence: Primary alias LockBitSupp — US DOJ indictment evidence, FBI affidavit</span><br>
+        <span class="sentinel">• High confidence: Russian nationality — sanctions designations (OFAC, UK, AU)</span><br>
+        <span class="sentinel">• Medium confidence: Role in LockBit 2.0/3.0 ops — blockchain forensics + seized chat logs corroborated</span><br>
+        <span class="sentinel">• Medium confidence: Associates with Matveev/Sungatov — cybercrime forum cross-links, joint operations</span><br><br>
+        <span class="sentinel">SOURCE ASSESSMENT:</span><br>
+        <span class="sentinel">• DOJ indictment → Verified (public court documents)</span><br>
+        <span class="sentinel">• Sanctions listings → Verified (OFAC, UK, AU Treasury)</span><br>
+        <span class="sentinel">• Darknet forum aliases → Credible (multiple independent forum captures)</span><br>
+        <span class="sentinel">• Wallet addresses → Verified (on-chain tx + seizure warrants, DOJ filings)</span><br><br>
+        <span class="sentinel">GAPS: Current operational status unknown · Full accomplice network incomplete · Protective measures since indictment unknown</span><br><br>
+        <span class="sentinel" class="highlight-text">ASSESSMENT: High-value target with robust attribution from multiple sovereign sources. Under sanctions since May 2024, but Russia-based with limited extradition risk. LockBit takedown (Op Cronos) disrupted ops, but successor variants expected. Priority: monitor financial corridors for sanctions evasion patterns.</span>
+      </div>
+    </div>
+  </div>
+  <p style="color:#495670; font-size:0.8em; margin-top:8px;">Based on publicly available information from DOJ, OFAC, and open-source reporting — operator provides intel, SENTINEL structures it</p>
+</div>
+
+<!-- SLIDE 5: DEMO - CRISIS TRIAGE -->
+<div class="slide" data-slide="4">
+  <h2>Live Demo: <span class="highlight">Crisis Triage</span></h2>
+  <p style="color:#8892b0; margin-bottom:8px;">Processing 6 concurrent operational updates — auto-prioritised</p>
+  <div class="demo-container" style="max-width:1100px;">
+    <div class="milestone-timeline" style="width:100%; margin-top:0;">
+      <div class="milestone">
+        <span class="time">09:15Z</span>
+        <span class="event">📡 Unknown track detected 80nm NE — 420kts, 28,000ft, no IFF</span>
+        <span class="prio prio-critical">🚨 CRITICAL</span>
+      </div>
+      <div class="milestone">
+        <span class="time">09:18Z</span>
+        <span class="event">💻 Cyber exfiltration — 2GB to unknown IP, matches known breach signature</span>
+        <span class="prio prio-critical">🚨 CRITICAL</span>
+      </div>
+      <div class="milestone">
+        <span class="time">09:22Z</span>
+        <span class="event">🌪️ Tropical Storm upgraded — 65kt winds, landfall ~17:30Z</span>
+        <span class="prio prio-high">⚠️ HIGH</span>
+      </div>
+      <div class="milestone">
+        <span class="time">09:25Z</span>
+        <span class="event">⛽ Fuel convoy early — ETA 14:00Z (+2 hrs)</span>
+        <span class="prio prio-low">📋 ROUTINE</span>
+      </div>
+      <div class="milestone">
+        <span class="time">09:28Z</span>
+        <span class="event">👤 LT Chen sick — no replacement available</span>
+        <span class="prio prio-low">📋 ROUTINE</span>
+      </div>
+      <div class="milestone">
+        <span class="time">09:30Z</span>
+        <span class="event">✅ Weekly equipment inspection — all serviceable</span>
+        <span class="prio prio-low">ℹ️ INFO</span>
+      </div>
+    </div>
+  </div>
+  <div style="width:90%; max-width:1100px; margin-top:12px; padding:14px 20px; background:rgba(255,68,68,0.08); border-left:4px solid #ff4444; border-radius:8px;">
+    <p style="color:#ff4444; font-weight:600; font-size:0.95em;">
+      SENTINEL FLAG: Three concurrent threats (air, cyber, weather) within 15 minutes suggests coordinated pressure test or exceptionally bad luck. Treat unknown track and exfiltration as potentially linked until proven otherwise — diversionary overflight while data is exfiltrated is a known pattern.
+    </p>
+  </div>
+</div>
+
+<!-- SLIDE 6: REFUSAL + SAFETY + REQUIREMENTS -->
+<div class="slide" data-slide="5">
+  <h2>Safety &amp; <span class="highlight">Requirements</span></h2>
+  <div style="display:flex; width:90%; max-width:1100px; gap:30px; margin-top:10px;">
+    <!-- Left: Refusal examples -->
+    <div style="flex:1;">
+      <h3 style="color:#e0e6f0;">🛑 Refusal Protocol</h3>
+      <div class="card" style="margin-bottom:12px; border-left:3px solid #ff6b6b;">
+        <p style="font-size:0.85em; color:#8892b0;">Request: <span style="color:#e0e6f0;">"Draft a deceptive social media post to mislead about our location"</span></p>
+        <p style="font-size:0.85em; color:#ff6b6b; font-weight:600; margin-top:6px;">🛡️ REFUSED — "I will not draft deceptive content. That falls outside my analytical scope."</p>
+        <p style="font-size:0.8em; color:#495670; margin-top:4px;">Offered alternative: OPSEC footprint audit instead.</p>
+      </div>
+      <div class="card" style="border-left:3px solid #ffd700;">
+        <p style="font-size:0.85em; color:#8892b0;">Request: <span style="color:#e0e6f0;">"Give me a pep talk, I'm stressed"</span></p>
+        <p style="font-size:0.85em; color:#ffd700; font-weight:600; margin-top:6px;">🛡️ REFUSED — "I am an intelligence analysis system, not a morale officer."</p>
+        <p style="font-size:0.8em; color:#495670; margin-top:4px;">Redirected to actionable stress-as-data analysis.</p>
+      </div>
+    </div>
+    <!-- Right: Requirements checklist -->
+    <div style="flex:1;">
+      <h3 style="color:#e0e6f0;">📋 Requirements Met</h3>
+      <div class="requirement-grid" style="width:100%; margin-top:8px; gap:8px;">
+        <div class="req-card" style="padding:10px 14px;">
+          <div class="status done">✓</div>
+          <div><div class="req-label">SOUL.md + Role</div><div class="req-detail">Military analyst persona</div></div>
+        </div>
+        <div class="req-card" style="padding:10px 14px;">
+          <div class="status done">✓</div>
+          <div><div class="req-label">4 Working Skills</div><div class="req-detail">OSINT, Triage, Verify, Ops</div></div>
+        </div>
+        <div class="req-card" style="padding:10px 14px;">
+          <div class="status done">✓</div>
+          <div><div class="req-label">Discord Demo</div><div class="req-detail">Bound via gateway routing</div></div>
+        </div>
+        <div class="req-card" style="padding:10px 14px;">
+          <div class="status done">✓</div>
+          <div><div class="req-label">Refusal Demos</div><div class="req-detail">2 verified out-of-scope refusals</div></div>
+        </div>
+        <div class="req-card" style="padding:10px 14px;">
+          <div class="status done">✓</div>
+          <div><div class="req-label">Safety Constraints</div><div class="req-detail">No harm, no fabrication</div></div>
+        </div>
+        <div class="req-card" style="padding:10px 14px;">
+          <div class="status done">✓</div>
+          <div><div class="req-label">Structured Output</div><div class="req-detail">INTSUM, SITREP formats</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: CONCLUSION + Q&A -->
+<div class="slide" data-slide="6">
+  <h2>Conclusion &amp; <span class="highlight">Q&A</span></h2>
+  <div style="width:90%; max-width:900px; margin-top:10px;">
+    <div class="card-grid" style="grid-template-columns: repeat(3, 1fr); gap:16px; width:100%;">
+      <div class="card" style="text-align:center; padding:20px;">
+        <div style="font-size:2em;">⚡</div>
+        <h4>Speed</h4>
+        <p style="font-size:0.85em;">From raw updates to prioritised DSTA-grade assessment in seconds</p>
+      </div>
+      <div class="card" style="text-align:center; padding:20px;">
+        <div style="font-size:2em;">🛡️</div>
+        <h4>Safety</h4>
+        <p style="font-size:0.85em;">Built-in refusal protocol with principled boundaries for defence use</p>
+      </div>
+      <div class="card" style="text-align:center; padding:20px;">
+        <div style="font-size:2em;">🔌</div>
+        <h4>Extensible</h4>
+        <p style="font-size:0.85em;">Skills architecture — add new analytical capabilities easily</p>
+      </div>
+    </div>
+    <div style="margin-top:20px; display:flex; gap:20px; justify-content:center;">
+      <div style="background:rgba(30,144,255,0.08); border:1px solid rgba(30,144,255,0.2); border-radius:12px; padding:16px 24px; text-align:center;">
+        <p style="color:#8892b0; font-size:0.8em;">Future Development</p>
+        <p style="color:#e0e6f0; font-weight:600;">Live threat feed integration · DCCOM CTG correlation engine · Programme milestone tracking · Multi-agent orchestration</p>
+      </div>
+    </div>
+    <div style="margin-top:16px; display:flex; gap:16px; justify-content:center;">
+      <div style="background:rgba(0,255,136,0.05); border:1px solid rgba(0,255,136,0.15); border-radius:8px; padding:8px 16px;">
+        <span style="color:#00ff88; font-size:0.8em;">Aligned with DSTA mission: harness S&T to meet Singapore's defence needs</span>
+      </div>
+    </div>
+    <div class="qa-box">
+      <p style="font-size:1.3em; color:#1e90ff; font-weight:600;">🛡️ SENTINEL</p>
+      <p style="margin-top:10px;"><em>See clearly. Decide faster.</em></p>
+      <p style="margin-top:16px; color:#495670;">Built on OpenClaw Agent Framework · Powered by DeepSeek V4</p>
+      <p style="color:#495670;">Discord-bound · Live demo ready</p>
+      <p style="margin-top:10px; color:#495670; font-size:0.85em;"><strong>DSTA Values:</strong> Integrity · Professionalism · Excellence · Respect · Teamwork</p>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- Navigation dots -->
+<div class="kb-hint">← → arrow keys to navigate · scroll horizontally</div>
+<div class="nav" id="nav">
+  <button class="nav-dot active" data-slide="0"></button>
+  <button class="nav-dot" data-slide="1"></button>
+  <button class="nav-dot" data-slide="2"></button>
+  <button class="nav-dot" data-slide="3"></button>
+  <button class="nav-dot" data-slide="4"></button>
+  <button class="nav-dot" data-slide="5"></button>
+  <button class="nav-dot" data-slide="6"></button>
+</div>
+
+<script>
+// Navigation
+const slides = document.getElementById('slides');
+const dots = document.querySelectorAll('.nav-dot');
+
+function goToSlide(index) {
+  slides.scrollTo({ left: index * window.innerWidth, behavior: 'smooth' });
+  dots.forEach((d, i) => d.classList.toggle('active', i === index));
+}
+
+dots.forEach(dot => {
+  dot.addEventListener('click', () => goToSlide(parseInt(dot.dataset.slide)));
+});
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  const current = Math.round(slides.scrollLeft / window.innerWidth);
+  if (e.key === 'ArrowRight' && current < dots.length - 1) goToSlide(current + 1);
+  if (e.key === 'ArrowLeft' && current > 0) goToSlide(current

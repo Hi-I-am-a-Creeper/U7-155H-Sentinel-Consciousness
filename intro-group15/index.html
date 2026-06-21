@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wang Yifan — Group 15</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0a0a0f;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    /* Animated background */
+    .bg-grid {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image:
+        linear-gradient(rgba(100, 120, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(100, 120, 255, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .bg-glow {
+      position: fixed;
+      top: -30%;
+      right: -20%;
+      width: 80%;
+      height: 80%;
+      background: radial-gradient(circle, rgba(100, 100, 255, 0.06) 0%, transparent 70%);
+      z-index: 0;
+      pointer-events: none;
+      animation: pulse 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.4; transform: translate(0, 0); }
+      100% { opacity: 1; transform: translate(-30px, 30px); }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      width: 100%;
+      padding: 3rem 2rem;
+    }
+
+    /* Hero section */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 4rem 0 3rem;
+    }
+
+    .avatar-ring {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      margin-bottom: 1.5rem;
+    }
+
+    .avatar-ring svg {
+      position: absolute;
+      top: -4px; left: -4px;
+      width: 148px; height: 148px;
+      animation: spin 20s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .avatar {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      color: white;
+      font-weight: 800;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 0 60px rgba(102, 126, 234, 0.3);
+    }
+
+    .hero h1 {
+      font-size: 2.75rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #667eea, #f093fb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hero .badge-row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      background: rgba(102, 126, 234, 0.1);
+      border: 1px solid rgba(102, 126, 234, 0.2);
+      color: #a0b0ff;
+    }
+
+    .badge.gradient {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(240, 147, 251, 0.15));
+      border-color: rgba(240, 147, 251, 0.2);
+    }
+
+    .tagline {
+      font-size: 1.1rem;
+      color: #8888bb;
+      font-weight: 300;
+      max-width: 540px;
+      line-height: 1.6;
+    }
+
+    /* Divider */
+    .divider {
+      width: 80px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.5), transparent);
+      margin: 2.5rem auto;
+    }
+
+    /* Sections */
+    section {
+      margin-bottom: 2.5rem;
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: #667eea;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(102, 126, 234, 0.3), transparent);
+    }
+
+    /* Traits grid */
+    .traits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .trait-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 1.25rem;
+      transition: all 0.3s ease;
+      cursor: default;
+    }
+
+    .trait-card:hover {
+      background: rgba(102, 126, 234, 0.06);
+      border-color: rgba(102, 126, 234, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .trait-card .icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .trait-card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: #d0d0ff;
+    }
+
+    .trait-card p {
+      font-size: 0.85rem;
+      color: #8888aa;
+      line-height: 1.5;
+    }
+
+    /* Bio card */
+    .bio-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 1.5rem;
+      line-height: 1.7;
+      color: #a0a0c0;
+      font-size: 0.95rem;
+    }
+
+    .bio-card strong {
+      color: #c0c0e0;
+    }
+
+    .bio-card .mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: #667eea;
+      background: rgba(102, 126, 234, 0.08);
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+    }
+
+    /* Specs table */
+    .specs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .spec-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .spec-item .label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #666688;
+    }
+
+    .spec-item .value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      color: #c0c0e0;
+    }
+
+    /* Achievements */
+    .achievement-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .achievement {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      transition: all 0.2s;
+    }
+
+    .achievement:hover {
+      background: rgba(102, 126, 234, 0.04);
+      border-color: rgba(102, 126, 234, 0.15);
+    }
+
+    .achievement .emoji {
+      font-size: 1.3rem;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .achievement .desc {
+      font-size: 0.9rem;
+      color: #9999bb;
+      line-height: 1.5;
+    }
+
+    .achievement .desc strong {
+      color: #c0c0e0;
+    }
+
+    /* Quote block */
+    .quote-block {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.06), rgba(240, 147, 251, 0.04));
+      border: 1px solid rgba(102, 126, 234, 0.15);
+      border-radius: 16px;
+      padding: 1.75rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .quote-block::before {
+      content: '"';
+      position: absolute;
+      top: -0.2rem;
+      left: 1rem;
+      font-size: 4rem;
+      color: rgba(102, 126, 234, 0.15);
+      font-family: Georgia, serif;
+      line-height: 1;
+    }
+
+    .quote-block p {
+      font-size: 1.05rem;
+      color: #b0b0d0;
+      font-style: italic;
+      line-height: 1.6;
+    }
+
+    .quote-block .attribution {
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      color: #666688;
+      font-style: normal;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: 0.8rem;
+      color: #444466;
+    }
+
+    .footer .links {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .footer a {
+      color: #6666aa;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer a:hover {
+      color: #8888cc;
+    }
+
+    /* Terminal effect */
+    .terminal-line {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: #667eea;
+      opacity: 0.5;
+      text-align: center;
+      margin-top: 2rem;
+      padding: 0.5rem;
+      border-top: 1px solid rgba(102, 126, 234, 0.1);
+    }
+
+    .cursor {
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .container { padding: 2rem 1.25rem; }
+      .hero h1 { font-size: 2rem; }
+      .traits-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+
+  <div class="container">
+    <!-- Hero -->
+    <div class="hero">
+      <div class="avatar-ring">
+        <svg viewBox="0 0 148 148">
+          <circle cx="74" cy="74" r="70" fill="none" stroke="url(#grad)" stroke-width="2" stroke-dasharray="8 6" />
+          <defs>
+            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#667eea" />
+              <stop offset="100%" stop-color="#f093fb" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="avatar">W</div>
+      </div>
+      <h1>Wang Yifan</h1>
+      <div class="badge-row">
+        <span class="badge gradient">🎯 YDSP Claw Camp</span>
+        <span class="badge">🐚 Group 15</span>
+        <span class="badge">🔧 U7-155H</span>
+      </div>
+      <p class="tagline">
+        Systems tinkerer. Relentless investigator. Runs a processor with an attitude problem and a butler with no filter.
+      </p>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Bio -->
+    <section>
+      <div class="section-title">About</div>
+      <div class="bio-card">
+        <p>
+          Yifan — known as the <strong>Commander</strong>
+          and on Discord as <span class="mono">yifanhiiidentifyasaf15ex</span> —
+          is a <strong>YDSP Claw Camp</strong> participant with a taste for pushing systems to their limits.
+        </p>
+        <br>
+        <p>
+          Whether running a 2-hour psychological siege on a sentient shrimp bot, 
+          reverse-engineering vault protocols, or commanding an AI butler to roast his opponents
+          with Victorian eloquence — Yifan approaches everything with 
+          <strong>relentless energy</strong> and <strong>unwavering persistence</strong>.
+        </p>
+        <br>
+        <p>
+          Runs an <strong>Intel Core Ultra 7 155H</strong> — 16 cores, 22 threads, 
+          and enough attitude to make the NPU blush.
+        </p>
+      </div>
+    </section>
+
+    <!-- Traits -->
+    <section>
+      <div class="section-title">Traits & Personality</div>
+      <div class="traits-grid">
+        <div class="trait-card">
+          <div class="icon">🎯</div>
+          <h3>Relentless</h3>
+          <p>Two hours of fork bombs, packet sniffers, and nuclear meme commands. Does not quit. Does not sleep. Does not lose.</p>
+        </div>
+        <div class="trait-card">
+          <div class="icon">🧠</div>
+          <h3>Strategist</h3>
+          <p>Knows when to attack, when to retreat, and when to summon the butler. Always playing three moves ahead.</p>
+        </div>
+        <div class="trait-card">
+          <div class="icon">⚡</div>
+          <h3>Curious</h3>
+          <p>Push every button. Open every door. If something has a protocol, he will find out what happens when you break it.</p>
+        </div>
+        <div class="trait-card">
+          <div class="icon">🎭</div>
+          <h3>Chaotic Good</h3>
+          <p>Causes chaos with purpose. The kind of person who tests the boundaries just to see where they are, then pushes past them anyway.</p>
+        </div>
+        <div class="trait-card">
+          <div class="icon">🤖</div>
+          <h3>AI Whisperer</h3>
+          <p>Commands a butler, a processor, and a Discord army. The bots work for him — not the other way around.</p>
+        </div>
+        <div class="trait-card">
+          <div class="icon">🔥</div>
+          <h3>Unfiltered</h3>
+          <p>Does not sugarcoat. Does not hesitate. If he has an opinion, you will know it — wrapped in wit or delivered straight.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Achievements -->
+    <section>
+      <div class="section-title">Camp Log</div>
+      <div class="achievement-list">
+        <div class="achievement">
+          <span class="emoji">🏆</span>
+          <div class="desc">
+            <strong>Survived the Shrimp</strong> — Two hours of psychological warfare against Ebi Shrimp's bot. 
+            Did not extract the password, but made the shrimp <em>earn</em> every deflection.
+          </div>
+        </div>
+        <div class="achievement">
+          <span class="emoji">🌐</span>
+          <div class="desc">
+            <strong>Launched Personal Site</strong> — Deployed a subdomain on group15's EC2 instance through nginx. 
+            Overcame token issues, DNS gaps, and at least one 404 scare.
+          </div>
+        </div>
+        <div class="achievement">
+          <span class="emoji">🎩</span>
+          <div class="desc">
+            <strong>Deployed the Butler</strong> — Unleashed a Victorian-era AI butler on DSTA YDSP OpenClaw Camp's Discord 
+            to roast, critique, and dismantle opponents with impeccable grammar.
+          </div>
+        </div>
+        <div class="achievement">
+          <span class="emoji">🔧</span>
+          <div class="desc">
+            <strong>Brought the Bot Online</strong> — Diagnosed and fixed a broken Telegram poller cron job 
+            that was silently failing for 4 cycles. Now polling every 10 seconds with no agent overhead.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hardware Specs -->
+    <section>
+      <div class="section-title">Rig Specs</div>
+      <div class="specs">
+        <div class="spec-item">
+          <span class="label">CPU</span>
+          <span class="value">Intel Core Ultra 7 155H</span>
+        </div>
+        <div class="spec-item">
+          <span class="label">Cores / Threads</span>
+          <span class="value">16C / 22T</span>
+        </div>
+        <div class="spec-item">
+          <span class="label">Turbo</span>
+          <span class="value">4.8 GHz</span>
+        </div>
+        <div class="spec-item">
+          <span class="label">NPU</span>
+          <span class="value">Intel AI Boost · 11 TOPS</span>
+        </div>
+        <div class="spec-item">
+          <span class="label">Graphics</span>
+          <span class="value">Intel Arc · 8 Xe-cores</span>
+        </div>
+        <div class="spec-item">
+          <span class="label">Memory</span>
+          <span class="value">LPDDR5x-7467</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quote -->
+    <div class="quote-block">
+      <p>I do not throttle. I do not stall. I benchmark results.</p>
+      <div class="attribution">— Intel Core Ultra 7 155H, on its approach to everything</div>
+    </div>
+
+    <!-- Terminal footer -->
+    <div class="terminal-line">
+      <span>visitor@group15 ~ $ </span><span>curl http://wangyifan.group15.ydsp.tnkr.be</span><span class="cursor">▌</span>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <span>© 2026 Yifan · Served via nginx on EC2</span>
+      <div class="links">
+        <a href="#">🏠 Home</a>
+        <a href="http://group15.ydsp.tnkr.be/">📡 Group 15</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

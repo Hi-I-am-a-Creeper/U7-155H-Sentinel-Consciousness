@@ -1,0 +1,1 @@
+- Clean cravat and press to proper crispness\n- Brew afternoon tea (Earl Grey, 95°C, 3 min steep)\n- Sit down for five minutes and reflect on the evening

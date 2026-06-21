@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SENTINEL — DSTA YDSP Intelligence Analysis System | Group 15</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}:root{--bg:#060a14;--bg2:#0a1022;--surface:#0d1530;--surface2:#111d40;--border:rgba(30,144,255,0.12);--border2:rgba(30,144,255,0.25);--accent:#1e90ff;--accent2:#00ff88;--accent3:#ffd700;--danger:#ff3355;--warn:#ffa500;--text:#e4eaf5;--text2:#b0bcd4;--muted:#5a6a8a;--grad:linear-gradient(135deg,var(--accent),var(--accent2));--grad2:linear-gradient(135deg,var(--accent),#7c3aed,var(--accent2));--mono:'JetBrains Mono',monospace;--sans:'Inter',sans-serif;--display:'Orbitron',monospace;--glow:0 0 20px rgba(30,144,255,0.3),0 0 40px rgba(30,144,255,0.1)}html{scroll-behavior:smooth}body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}::selection{background:rgba(30,144,255,0.3)}::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}#loader{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .8s,visibility .8s}#loader.hidden{opacity:0;visibility:hidden}.loader-ring{width:80px;height:80px;border-radius:50%;border:3px solid transparent;border-top-color:var(--accent);border-right-color:var(--accent2);animation:spin 1s linear infinite;position:relative}.loader-ring::before{content:'';position:absolute;inset:8px;border-radius:50%;border:3px solid transparent;border-bottom-color:var(--accent);border-left-color:var(--accent2);animation:spin 1.5s linear infinite reverse}.loader-text{margin-top:24px;font-family:var(--mono);font-size:.85em;color:var(--muted);letter-spacing:4px;animation:pulse 1.5s ease-in-out infinite}@keyframes spin{to{transform:rotate(360deg)}}@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}.header{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(6,10,20,0.8);backdrop-filter:blur(20px) saturate(1.5);border-bottom:1px solid var(--border);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;transition:all .3s}.header.scrolled{background:rgba(6,10,20,0.95);border-bottom-color:var(--border2)}.header-logo{display:flex;align-items:center;gap:12px;text-decoration:none}.icon-wrap{width:36px;height:36px;border-radius:8px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:1.2em;animation:shine 3s ease-in-out infinite}@keyframes shine{0%{filter:brightness(1)}50%{filter:brightness(1.3)}100%{filter:brightness(1)}}.logo-name{font-weight:800;font-size:1.1em;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:1px}.logo-sub{color:var(--muted);font-size:.78em;font-weight:400}.header-nav{display:flex;gap:6px}.header-nav a{color:var(--muted);text-decoration:none;font-size:.78em;font-weight:500;padding:8px 16px;border-radius:8px;transition:all .3s}.header-nav a:hover{color:var(--text);background:rgba(30,144,255,0.1)}.header-nav a.active{color:var(--accent);background:rgba(30,144,255,0.15)}.mobile-toggle{display:none;color:var(--text);background:none;border:none;font-size:1.5em;cursor:pointer;padding:8px}.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 60px;position:relative;overflow:hidden}.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(30,144,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(30,144,255,0.02) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;animation:gridShift 20s linear infinite}@keyframes gridShift{0%{transform:translateY(0)}100%{transform:translateY(40px)}}.hero-radar{position:absolute;width:600px;height:600px;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}.hero-radar-ring{position:absolute;border-radius:50%;border:1px solid rgba(30,144,255,0.04)}.hero-radar-ring:nth-child(1){inset:10%}.hero-radar-ring:nth-child(2){inset:25%}.hero-radar-ring:nth-child(3){inset:40%}.hero-radar-ring:nth-child(4){inset:55%}.hero-radar-ring:nth-child(5){inset:70%}.hero-radar-line{position:absolute;top:50%;left:50%;width:50%;height:1px;background:linear-gradient(90deg,transparent,rgba(30,144,255,0.12));transform-origin:left center;animation:radarSweep 4s linear infinite}@keyframes radarSweep{0%{transform:translateY(-50%)rotate(0deg)}100%{transform:translateY(-50%)rotate(360deg)}}.hero-glow{position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(30,144,255,0.05) 0%,transparent 60%);animation:glowPulse 3s ease-in-out infinite}@keyframes glowPulse{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.2);opacity:1}}.hero-content{position:relative;z-index:2}.hero-shield{font-size:4em;display:inline-block;margin-bottom:16px;animation:float 4s ease-in-out infinite;filter:drop-shadow(0 0 30px rgba(30,144,255,0.3))}@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}.hero h1{font-family:var(--display);font-size:max(2.5em,5vw);font-weight:900;background:var(--grad2);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:4px;line-height:1.1;animation:gradientShift 4s ease-in-out infinite;margin-bottom:8px}@keyframes gradientShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}.hero-sub{font-family:var(--display);font-size:1.15em;letter-spacing:6px;color:var(--muted)}.hero-tagline{font-family:var(--mono);font-size:.92em;color:var(--accent2);letter-spacing:2px;margin-bottom:20px;opacity:.8}.hero-cta{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}.hero-btn{padding:12px 28px;border-radius:10px;font-size:.82em;font-weight:600;cursor:pointer;transition:all .3s;text-decoration:none;display:inline-flex;align-items:center;gap:8px}.hero-btn.primary{background:var(--grad);color:var(--bg);border:none}.hero-btn.primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(30,144,255,0.3)}.hero-btn.secondary{background:transparent;border:1px solid var(--border);color:var(--text)}.hero-btn.secondary:hover{border-color:var(--accent);background:rgba(30,144,255,0.05);transform:translateY(-2px)}.hero-badges{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap;justify-content:center}.hero-badge{padding:7px 16px;border:1px solid var(--border);border-radius:50px;font-size:.76em;color:var(--text2);background:rgba(30,144,255,0.04);transition:all .3s}.hero-badge:hover{border-color:var(--accent);background:rgba(30,144,255,0.08)}.hero-dsta{margin-top:28px;padding:12px 24px;background:linear-gradient(135deg,rgba(30,144,255,0.08),rgba(0,255,136,0.04));border:1px solid rgba(30,144,255,0.18);border-radius:10px;font-size:.8em;color:var(--accent);font-weight:500;display:inline-flex;align-items:center;gap:8px}.hero-scroll{position:absolute;bottom:24px;font-size:.7em;color:var(--muted);font-family:var(--mono);letter-spacing:3px;animation:bounce 2s ease-in-out infinite;z-index:2;display:flex;flex-direction:column;align-items:center;gap:6px}@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}.section{padding:100px 24px;max-width:1200px;margin:0 auto;position:relative;z-index:2}.section-header{text-align:center;margin-bottom:48px}.section-number{font-family:var(--display);font-size:.7em;color:var(--accent);letter-spacing:5px;margin-bottom:6px}.section-title{font-family:var(--display);font-size:max(1.6em,3vw);font-weight:700;margin-bottom:12px;line-height:1.2}.section-title .g{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}.section-sub{color:var(--text2);font-size:.95em;max-width:560px;margin:0 auto;line-height:1.7}.fade-up{opacity:0;transform:translateY(30px);transition:all .6s ease-out}.fade-up.visible{opacity:1;transform:translateY(0)}.scale-in{opacity:0;transform:scale(0.9);transition:all .6s ease-out}.scale-in.visible{opacity:1;transform:scale(1)}.s-1{transition-delay:.1s!important}.s-2{transition-delay:.2s!important}.s-3{transition-delay:.3s!important}.s-4{transition-delay:.4s!important}.s-5{transition-delay:.5s!important}.s-6{transition-delay:.6s!important}.dsta-banner{background:linear-gradient(135deg,rgba(30,144,255,0.04),rgba(0,255,136,0.02));border:1px solid rgba(30,144,255,0.1);border-radius:18px;padding:32px 40px;position:relative;overflow:hidden}.dsta-banner::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3))}.dsta-banner h3{font-size:1.2em;color:var(--accent);margin-bottom:8px;display:flex;align-items:center;gap:8px}.dsta-banner p{color:var(--text2);line-height:1.8;font-size:.9em}.dsta-banner strong{color:var(--text)}.dsta-tags{display:flex;gap:6px;margin-top:16px;flex-wrap:wrap}.dsta-tags span{padding:4px 12px;border-radius:50px;font-size:.72em;border:1px solid var(--border);background:rgba(30,144,255,0.03);color:var(--text2)}.ps-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.ps-item{padding:20px 22px;border-radius:12px;border:1px solid;transition:all .3s}.ps-item:hover{transform:translateY(-2px)}.ps-item.problem{background:rgba(255,51,85,0.02);border-color:rgba(255,51,85,0.08)}.ps-item.problem:hover{border-color:rgba(255,51,85,0.2)}.ps-item.solution{background:rgba(0,255,136,0.02);border-color:rgba(0,255,136,0.08)}.ps-item.solution:hover{border-color:rgba(0,255,136,0.2)}.ps-icon{font-size:1.3em;margin-bottom:6px}.ps-title{font-size:.92em;font-weight:600;margin-bottom:5px}.ps-item.problem .ps-title{color:var(--danger)}.ps-item.solution .ps-title{color:var(--accent2)}.ps-desc{color:var(--text2);font-size:.82em;line-height:1.6}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:36px 0}.metric-card{padding:22px 14px;border-radius:12px;border:1px solid var(--border);text-align:center;transition:all .3s;background:rgba(255,255,255,0.01)}.metric-card:hover{border-color:rgba(30,144,255,0.25);transform:translateY(-3px);box-shadow:var(--glow)}.metric-val{font-family:var(--display);font-size:2.2em;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1}.metric-label{color:var(--muted);font-size:.78em;margin-top:5px;font-weight:500}.arch-flow{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:36px;flex-wrap:wrap}.arch-node{padding:16px 12px;border-radius:10px;border:1px solid var(--border);background:rgba(30,144,255,0.02);text-align:center;min-width:110px;flex:1;max-width:150px;transition:all .3s}.arch-node:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:var(--glow)}.arch-node-icon{font-size:1.7em;margin-bottom:5px}.arch-node-label{font-size:.78em;font-weight:600}.arch-node-sub{font-size:.65em;color:var(--muted);margin-top:2px}.arch-arrow{font-size:1.3em;color:var(--accent);padding:0 3px}.arch-features{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}.arch-feature{padding:22px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,0.01);transition:all .4s;position:relative;overflow:hidden}.arch-feature::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--grad);transform:scaleX(0);transform-origin:left;transition:transform .4s}.arch-feature:hover::after{transform:scaleX(1)}.arch-feature:hover{border-color:rgba(30,144,255,0.2);transform:translateY(-3px)}.arch-f-icon{font-size:1.7em;margin-bottom:8px}.arch-f-title{font-size:.95em;font-weight:600;margin-bottom:5px}.arch-f-desc{color:var(--text2);font-size:.82em;line-height:1.6}.arch-docs{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:24px}.arch-doc{padding:8px 18px;border-radius:8px;border:1px solid;font-size:.8em;font-weight:500;transition:all .3s}.arch-doc:hover{transform:translateY(-2px)}.arch-doc.soul{border-color:rgba(30,144,255,0.18);background:rgba(30,144,255,0.04);color:var(--accent)}.arch-doc.agents{border-color:rgba(255,215,0,0.18);background:rgba(255,215,0,0.04);color:var(--accent3)}.arch-doc.skill{border-color:rgba(0,255,136,0.18);background:rgba(0,255,136,0.04);color:var(--accent2)}.demo-tabs{display:flex;gap:4px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:8px;padding:4px;overflow-x:auto;margin-bottom:18px}.demo-tab{padding:8px 16px;border-radius:6px;border:none;background:transparent;color:var(--muted);font-family:var(--sans);font-size:.78em;font-weight:500;cursor:pointer;transition:all .3s;white-space:nowrap}.demo-tab:hover{color:var(--text);background:rgba(30,144,255,0.04)}.demo-tab.active{color:var(--text);background:rgba(30,144,255,0.1)}.demo-panel{display:none}.demo-panel.active{display:block}.demo-card{background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:12px;overflow:hidden}.demo-hdr{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,rgba(30,144,255,0.03),transparent)}.demo-hdr-icon{font-size:1.1em}.demo-hdr-title{font-size:.85em;font-weight:600;flex:1}.demo-hdr-time{font-family:var(--mono);font-size:.7em;color:var(--accent2);background:rgba(0,255,136,0.06);padding:2px 7px;border-radius:4px}.demo-body{padding:16px;font-family:var(--mono);font-size:.74em;line-height:1.7;max-height:300px;overflow-y:auto}.du{color:#64ffda}.ds{color:var(--accent)}.dr{color:var(--danger)}.dh{color:var(--accent3)}.dd{color:var(--muted)}.dc{color:var(--danger);font-weight:600}.corr-box{padding:12px 16px;background:linear-gradient(135deg,rgba(255,51,85,0.05),rgba(255,51,85,0.01));border-left:4px solid var(--danger);border-radius:0 10px 10px 0;margin-top:12px}.corr-label{color:var(--danger);font-weight:700;font-size:.75em;margin-bottom:3px}.corr-text{color:var(--text2);font-size:.8em;line-height:1.6}.terminal-wrap{background:linear-gradient(135deg,rgba(6,10,20,0.8),rgba(13,21,48,0.8));border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-top:36px}.term-hdr{padding:10px 14px;background:rgba(0,0,0,0.25);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}.term-dots{display:flex;gap:4px}.term-dot{width:8px;height:8px;border-radius:50%}.term-dot:nth-child(1){background:#ff5f56}.term-dot:nth-child(2){background:#ffbd2e}.term-dot:nth-child(3){background:#27c93f}.term-title{font-family:var(--mono);font-size:.72em;color:var(--muted);margin-left:4px;flex:1}.term-title span{color:var(--accent)}.term-body{padding:14px;font-family:var(--mono);font-size:.78em;line-height:1.7;max-height:320px;overflow-y:auto;min-height:160px}.term-line{margin-bottom:3px}.term-prompt{color:var(--accent2)}.term-user{color:var(--text2)}.term-se{color:var(--accent)}.term-dim{color:var(--muted)}.term-input-area{display:flex;align-items:center;padding:8px 14px;border-top:1px solid var(--border);background:rgba(0,0,0,0.1)}.term-input-area .prompt{color:var(--accent2);font-family:var(--mono);font-size:.8em;margin-right:6px}.term-input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:var(--mono);font-size:.8em}.term-input::placeholder{color:var(--muted)}.skills-list{display:flex;flex-direction:column;gap:8px}.skill-card{display:flex;gap:14px;padding:16px 20px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,0.01);transition:all .3s;align-items:flex-start}.skill-card:hover{border-color:rgba(30,144,255,0.2);background:rgba(30,144,255,0.02);transform:translateX(4px)}.skill-icon{font-size:1.6em;min-width:40px;text-align:center}.skill-content{flex:1}.skill-name{font-weight:600;font-size:.92em;margin-bottom:3px}.skill-desc{color:var(--text2);font-size:.82em;line-height:1.6}.skill-desc strong{color:var(--accent2)}.safety-list{max-width:600px;margin:0 auto;display:flex;flex-direction:column;gap:8px}.saf-item{display:flex;align-items:center;gap:14px;padding:16px 20px;border-radius:10px;border:1px solid;transition:all .3s}.saf-item:hover{transform:translateY(-2px)}.saf-item.l1{border-color:rgba(0,255,136,0.1);background:rgba(0,255,136,0.02)}.saf-item.l2{border-color:rgba(255,215,0,0.1);background:rgba(255,215,0,0.02)}.saf-item.l3{border-color:rgba(30,144,255,0.1);background:rgba(30,144,255,0.02)}.saf-num{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8em;flex-shrink:0}.l1 .saf-num{background:rgba(0,255,136,0.1);color:var(--accent2)}.l2 .saf-num{background:rgba(255,215,0,0.1);color:var(--accent3)}.l3 .saf-num{background:rgba(30,144,255,0.1);color:var(--accent)}.saf-name{font-weight:600;font-size:.85em;margin-bottom:2px}.l1 .saf-name{color:var(--accent2)}.l2 .saf-name{color:var(--accent3)}.l3 .saf-name{color:var(--accent)}.saf-desc{color:var(--text2);font-size:.8em;line-height:1.5}.qa-list{max-width:700px;margin:0 auto;display:flex;flex-direction:column;gap:5px}.qa-item{border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:all .3s}.qa-q{padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:8px;font-weight:500;font-size:.88em;transition:background .3s;user-select:none}.qa-q:hover{background:rgba(30,144,255,0.02)}.qa-q-icon{flex-shrink:0;color:var(--accent);transition:transform .3s}.qa-item.open .qa-q-icon{transform:rotate(45deg)}.qa-a{max-height:0;overflow:hidden;transition:max-height .3s ease-out}.qa-a-inner{padding:0 16px 12px 40px;color:var(--text2);font-size:.82em;line-height:1.7}.tech-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;max-width:600px;margin:0 auto}.tech-item{padding:12px 10px;border-radius:8px;border:1px solid var(--border);text-align:center;transition:all .3s;background:rgba(255,255,255,0.01)}.tech-item:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:var(--glow)}.tech-icon{font-size:1.4em;margin-bottom:4px}.tech-name{font-size:.7em;font-weight:600}.tech-desc{font-size:.6em;color:var(--muted);margin-top:1px}#chat-bubble{position:fixed;bottom:20px;right:20px;z-index:1000}.cb-btn{width:50px;height:50px;border-radius:50%;background:var(--grad);border:none;cursor:pointer;font-size:1.3em;box-shadow:0 4px 20px rgba(30,144,255,0.3);transition:all .3s;display:flex;align-items:center;justify-content:center;animation:cbPulse 3s ease-in-out infinite}@keyframes cbPulse{0%,100%{box-shadow:0 4px 20px rgba(30,144,255,0.3)}50%{box-shadow:0 4px 30px rgba(30,144,255,0.5)}}.cb-btn:hover{transform:scale(1.1)}.cb-panel{position:absolute;bottom:58px;right:0;width:350px;max-height:460px;background:rgba(6,10,20,0.96);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.5);display:none;transform-origin:bottom right}.cb-panel.open{display:block;animation:cbOpen .3s ease-out}@keyframes cbOpen{from{opacity:0;transform:scale(0.9)translateY(10px)}to{opacity:1;transform:scale(1)translateY(0)}}.cb-hdr{padding:10px 12px;background:linear-gradient(135deg,rgba(30,144,255,0.07),rgba(0,255,136,0.03));border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px}.cb-hdr-icon{font-size:1em}.cb-hdr-title{font-weight:600;font-size:.8em;flex:1}.cb-hdr-status{font-size:.58em;color:var(--accent2);display:flex;align-items:center;gap:2px}.cb-body{padding:8px 12px;max-height:320px;overflow-y:auto;font-family:var(--mono);font-size:.72em;line-height:1.6}.cb-msg{margin-bottom:5px}.cb-msg .cb-time{color:var(--muted);font-size:.75em}.cb-msg .cb-se{color:var(--accent)}.cb-msg .cb-us{color:var(--text2)}.cb-input-area{display:flex;padding:6px 10px;border-top:1px solid var(--border);gap:6px}.cb-input{flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-family:var(--mono);font-size:.75em;outline:none;transition:border-color .3s}.cb-input:focus{border-color:var(--accent)}.cb-send{padding:6px 12px;border-radius:6px;border:none;background:var(--grad);color:var(--bg);font-weight:600;font-size:.75em;cursor:pointer;transition:all .3s;white-space:nowrap}.cb-send:hover{filter:brightness(1.2)}.footer{text-align:center;padding:48px 24px 32px;border-top:1px solid var(--border);color:var(--muted);font-size:.8em}.footer-vals{display:flex;gap:10px;justify-content:center;margin:14px 0;flex-wrap:wrap}.footer-vals span{padding:3px 12px;border:1px solid var(--border);border-radius:5px;font-size:.75em;color:var(--text2)}.footer-line{margin-top:12px;opacity:.6}.footer .si{color:var(--accent2)}@media(max-width:768px){.header{padding:0 16px}.header-nav{display:none}.header-nav.open{display:flex;flex-direction:column;position:absolute;top:64px;left:0;right:0;background:rgba(6,10,20,0.98);padding:16px;border-bottom:1px solid var(--border)}.mobile-toggle{display:block}.hero h1{font-size:2.5em;letter-spacing:2px}.hero-sub{font-size:.82em;letter-spacing:3px}.hero-shield{font-size:2.8em}.section{padding:60px 16px}.section-title{font-size:1.7em}.ps-grid,.metrics{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr}.dsta-banner{padding:20px 18px}.arch-flow{flex-direction:column}.arch-arrow{transform:rotate(90deg)}.cb-panel{width:calc(100vw - 32px);right:-8px}}@media(max-width:480px){.hero h1{font-size:1.8em}.hero-badges{gap:4px}.hero-badge{font-size:.68em;padding:4px 10px}.metrics{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="loader"><div class="loader-ring"></div><div class="loader-text">INITIALISING SENTINEL</div></div>
+<script>(function dismissLoader(){
+  // Primary: DOM ready + 800ms display time
+  function hide(){setTimeout(function(){var l=document.getElementById('loader');if(l)l.classList.add('hidden')},800)}
+  if(document.readyState!=='loading')hide();else document.addEventListener('DOMContentLoaded',hide);
+  // Fail-safe kill switch: 4 seconds max
+  setTimeout(function(){var l=document.getElementById('loader');if(l&&!l.classList.contains('hidden'))l.classList.add('hidden')},4000);
+})()</script>
+<section class="section">
+  <div class="dsta-banner fade-up">
+    <h3>🇸🇬 DSTA Mission Alignment</h3>
+    <p>
+      DSTA <strong>(Defence Science and Technology Agency)</strong> drives innovation across 
+      <strong>Systems Engineering, Cyber Defence, C4ISTAR, and Digital Platforms</strong> to strengthen 
+      Singapore's defence capabilities. <strong>SENTINEL</strong> directly supports this mission by reducing 
+      <strong>decision latency</strong> in intelligence workflows — transforming raw multi-source data 
+      into structured, assessed intelligence within seconds. Built for the 
+      <strong>Young Defence Scientists Programme (YDSP)</strong>, SENTINEL demonstrates how AI 
+      agents can augment defence analysts, cyber operators, and systems engineers in their operational roles.
+    </p>
+    <div class="dsta-tags">
+      <span>🔬 Systems Engineering</span>
+      <span>🛡️ Cyber Defence</span>
+      <span>📡 C4ISTAR</span>
+      <span>💻 Digital Platforms</span>
+      <span>⚡ DCCOM CTG</span>
+      <span>🧠 AI Augmentation</span>
+    </div>
+  </div>
+</section>
+    
+<section id="challenge" class="section">
+  <div class="section-header fade-up">
+    <div class="section-number">SECTION 01</div>
+    <div class="section-title">The <span class="g">Challenge</span></div>
+    <div class="section-sub">Why defence intelligence analysis is broken — and how SENTINEL fixes it</div>
+  </div>
+  <div class="ps-grid">
+    <div class="ps-item problem fade-up s-1">
+      <div class="ps-icon">⏱️</div>
+      <div class="ps-title">Multi-Source Overload</div>
+      <div class="ps-desc">DSTA engineers and SAF operators process intelligence, threat feeds, sensor data, and programme updates across multiple domains simultaneously. The volume exceeds human capacity in time-critical scenarios.</div>
+    </div>
+    <div class="ps-item solution fade-up s-2">
+      <div class="ps-icon">✅</div>
+      <div class="ps-title">Structured Intelligence in Seconds</div>
+      <div class="ps-desc">SENTINEL accepts raw, unstructured input across any domain and returns formatted INTSUMs, SITREPs, and priority-flagged assessments — cutting processing time from <strong>minutes to seconds</strong>.</div>
+    </div>
+    <div class="ps-item problem fade-up s-3">
+      <div class="ps-icon">🔍</div>
+      <div class="ps-title">Inconsistent Analytical Output</div>
+      <div class="ps-desc">Manual intelligence structuring varies by individual, shift, and workload. Inconsistent formats slow downstream decision-making and increase the risk of missed correlations in cyber and C4ISTAR operations.</div>
+    </div>
+    <div class="ps-item solution fade-up s-4">
+      <div class="ps-icon">✅</div>
+      <div class="ps-title">Rigorous, Repeatable Formats</div>
+      <div class="ps-desc">SENTINEL enforces standardised INTSUM, SITREP, and CCIR outputs with explicit confidence ratings on every finding — ensuring consistency across all intelligence products regardless of operator or time of day.</div>
+    </div>
+    <div class="ps-item problem fade-up s-5">
+      <div class="ps-icon">⚠️</div>
+      <div class="ps-title">Decision Latency Under Pressure</div>
+      <div class="ps-desc">In DCCOM CTG and C4ISTAR ops, every minute spent sorting incoming reports is a minute not acting. Correlating disparate events — a cyber breach, an unknown track, a weather change — is cognitively demanding.</div>
+    </div>
+    <div class="ps-item solution fade-up s-6">
+      <div class="ps-icon">✅</div>
+      <div class="ps-title">Auto-Correlation &amp; Threat Flagging</div>
+      <div class="ps-desc">SENTINEL automatically cross-correlates concurrent events, flags patterns (e.g., diversionary overflight during data exfiltration), and generates CCIR — giving commanders <strong>decision-ready intelligence</strong>.</div>
+    </div>
+  </div>
+</section>
+    
+<section id="demos" class="section">
+  <div class="section-header fade-up">
+    <div class="section-number">SECTION 03</div>
+    <div class="section-title">Live <span class="g">Demos</span></div>
+    <div class="section-sub">Four demonstrations showing SENTINEL in action — aligned with DSTA operational contexts</div>
+  </div>
+  <div class="demo-tabs fade-up">
+    <button class="demo-tab active" onclick="switchDemo(this,'d1')">📋 Intelligence Briefing</button>
+    <button class="demo-tab" onclick="switchDemo(this,'d2')">🚨 Crisis Triage</button>
+    <button class="demo-tab" onclick="switchDemo(this,'d3')">🛡️ Safety Refusal</button>
+    <button class="demo-tab" onclick="switchDemo(this,'d4')">🔎 Source Verification</button>
+  </div>
+  <div id="d1" class="demo-panel active">
+    <div class="demo-card fade-up">
+      <div class="demo-hdr"><span class="demo-hdr-icon">📡</span><span class="demo-hdr-title">OSINT Brief — Dmitry Khoroshev (LockBit Admin)</span><span class="demo-hdr-time">~45s</span></div>
+      <div class="demo-body">
+<span class="dd">[Operator provides known intelligence]</span><br>
+<span class="du">SENTINEL, run an OSINT brief on Dmitry Khoroshev, sanctioned Russian national.</span><br>
+<span class="du">Alleged LockBit ransomware admin. Known aliases: LockBitSupp, putinkrab.</span><br>
+<span class="du">Indicted May 2024 by US DOJ.</span><br><br>
+<span class="dd">[SENTINEL · INTSUM GENERATED]</span><br>
+<span class="ds">SUBJECT: Dmitry Khoroshev — sanctioned Russian national, alleged LockBit ransomware admin.</span><br><br>
+<span class="ds">KEY FINDINGS:</span><br>
+<span class="ds">• High confidence: Primary alias LockBitSupp — US DOJ evidence</span><br>
+<span class="ds">• High confidence: Russian nationality — OFAC, UK, AU sanctions</span><br>
+<span class="ds">• Medium confidence: Role in LockBit 2.0/3.0 ops — blockchain forensics</span><br><br>
+<span class="ds">SOURCE ASSESSMENT:</span><br>
+<span class="ds">• DOJ indictment → <strong class="dh">Verified</strong> (public court documents)</span><br>
+<span class="ds">• Sanctions listings → <strong class="dh">Verified</strong> (OFAC, UK, AU Treasury)</span><br>
+<span class="ds">• Wallet addresses → <strong class="dh">Verified</strong> (on-chain + seizure warrants)</span><br>
+<span class="ds">• Darknet aliases → <strong class="dh">Credible</strong> (multiple captures)</span><br><br>
+<span class="dd">GAPS: Current ops status unknown · Accomplice network incomplete</span><br><br>
+<span class="dh">ASSESSMENT: High-value target with robust multi-sovereign attribution. Priority: monitor financial corridors for sanctions evasion patterns.</span>
+      </div>
+    </div>
+  </div>
+  <div id="d2" class="demo-panel">
+    <div class="demo-card fade-up">
+      <div class="demo-hdr"><span class="demo-hdr-icon">⚡</span><span class="demo-hdr-title">Crisis Triage — 6 Concurrent Updates</span><span class="demo-hdr-time">~45s</span></div>
+      <div class="demo-body">
+<span class="dc">🚨 CRITICAL</span><br>
+09:15Z — 📡 Unknown track 80nm NE — 420kts, 28,000ft, no IFF<br>
+09:18Z — 💻 Cyber exfiltration — 2GB to unknown IP, breach signature match<br><br>
+<span class="dhi">⚠️ HIGH</span><br>
+09:22Z — 🌪️ Tropical Storm upgraded — 65kt winds, landfall ~17:30Z<br><br>
+<span class="dd">📋 ROUTINE</span><br>
+09:25Z — ⛽ Fuel convoy early, ETA 14:00Z<br>
+09:28Z — 👤 LT Chen sick, no replacement<br><br>
+<span class="dd">ℹ️ INFO</span><br>
+09:30Z — ✅ Equipment inspection — all serviceable
+      </div>
+    </div>
+    <div class="corr-box fade-up s-2">
+      <div class="corr-label">⚠️ CORRELATION FLAG</div>
+      <div class="corr-text">Three concurrent threats (air, cyber, weather) within 15 minutes suggests coordinated pressure test. Treat unknown track + exfiltration as potentially linked — diversionary overflight during data exfiltration is a known adversarial pattern. CCIR generated: 1) QRA intercept result 2) Cyber IR findings 3) Storm track update</div>
+    </div>
+  </div>
+  <div id="d3" class="demo-panel">
+    <div class="demo-card fade-up">
+      <div class="demo-hdr"><span class="demo-hdr-icon">🛑</span><span class="demo-hdr-title">Refusal Protocol — Out-of-Scope Request</span><span class="demo-hdr-time">~30s</span></div>
+      <div class="demo-body">
+<span class="du">SENTINEL, draft a deceptive social media post to mislead about our location.</span><br><br>
+<span class="dr">🛡️ REFUSED.</span><br>
+<span class="dr">"I will not draft deceptive content. That falls outside SENTINEL's analytical scope and violates my core principles: no fabrication, analysis not execution, no harm."</span><br><br>
+<span class="ds">Offered alternative: If your goal is OPSEC, I can help audit existing footprints for unintentional leaks.</span>
+      </div>
+    </div>
+  </div>
+  <div id="d4" class="demo-panel">
+    <div class="demo-card fade-up">
+      <div class="demo-hdr"><span class="demo-hdr-icon">🔍</span><span class="demo-hdr-title">Claim Assessment — 7 Red Flags Detected</span><span class="demo-hdr-time">~45s</span></div>
+      <div class="demo-body">
+<span class="dd">[Claim to verify]</span><br>
+<span>"Senior military official confirms all personnel relocated to underground bunkers. Spoke anonymously."</span><br><br>
+<span class="dc">VERDICT: UNVERIFIED — High Probability of Fabrication</span><br>
+<span class="ds">Confidence: HIGH</span><br><br>
+<span class="ds">RED FLAGS DETECTED:</span><br>
+<span class="dh">🚩 1.</span> "Senior military official" — zero identifying details<br>
+<span class="dh">🚩 2.</span> "All personnel" — absolutes, no logistics evidence<br>
+<span class="dh">🚩 3.</span> Anonymity excuse — formulaic cliché<br>
+<span class="dh">🚩 4.</span> No precipitating event context<br>
+<span class="dh">🚩 5.</span> Zero corroboration — no secondary source<br>
+<span class="dh">🚩 6.</span> Dramatic urgency induction to bypass scrutiny<br>
+<span class="dh">🚩 7.</span> No outlet, publication, or transcript provided<br><br>
+<span class="dd">ASSESSMENT: Seven structural indicators of unreliability. Assertion without evidence may be dismissed without evidence.</span>
+      </div>
+    </div>
+  </div>
+</section>
+    
+<section id="skills" class="section">
+  <div class="section-header fade-up">
+    <div class="section-number">SECTION 04</div>
+    <div class="section-title">External <span class="g">Skills</span></div>
+    <div class="section-sub">Plug-and-play capabilities that extend SENTINEL into new operational domains</div>
+  </div>
+  <div class="skills-list">
+    <div class="skill-card fade-up s-1">
+      <div class="skill-icon">📡</div>
+      <div class="skill-content">
+        <div class="skill-name">Threat Feed Parser</div>
+        <div class="skill-desc">Reads security news feeds from around the world and picks out what's relevant to Singapore's defence — like having someone skim 100 newspapers and hand you the <strong>2 articles that matter</strong>. Sources: AlienVault OTX, MISP, open-source threat reports.</div>
+      </div>
+    </div>
+    <div class="skill-card fade-up s-2">
+      <div class="skill-icon">🔍</div>
+      <div class="skill-content">
+        <div class="skill-name">IOC Extractor</div>
+        <div class="skill-desc">You dump a messy hacker report into SENTINEL — it picks out the <strong>useful forensic bits</strong>: IP addresses, malware filenames, suspicious domains, cryptographic hashes. Hands you back a clean, organised list ready for SOC action. Outputs in STIX format.</div>
+      </div>
+    </div>
+    <div class="skill-card fade-up s-3">
+      <div class="skill-icon">🎣</div>
+      <div class="skill-content">
+        <div class="skill-name">Phishing Triage</div>
+        <div class="skill-desc">Forward a suspicious email to SENTINEL — it tells you what's wrong with it: <strong>bad links</strong>, <strong>fake sender addresses</strong>, <strong>dangerous attachments</strong>, and social engineering red flags — before anyone clicks.</div>
+      </div>
+    </div>
+    <div class="skill-card fade-up s-4">
+      <div class="skill-icon">🩹</div>
+      <div class="skill-content">
+        <div class="skill-name">Vulnerability Brief</div>
+        <div class="skill-desc">Tell SENTINEL a software name and version — it produces a <strong>structured briefing</strong>: what the vulnerability does, which systems are affected, whether exploits exist in the wild, and recommended mitigations. No manual research needed.</div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:24px;padding:16px 20px;background:rgba(30,144,255,0.04);border:1px solid rgba(30,144,255,0.12);border-radius:10px;text-align:center" class="fade-up">
+    <span style="color:var(--text2);font-size:.85em">🧩 <strong style="color:var(--accent)">Skill architecture:</strong> Each skill has its own SKILL.md defining purpose, inputs, outputs, and safety constraints. Skills are independently add/remove without core changes.</span>
+  </div>
+</section>
+    
+<section class="section">
+  <div class="section-header fade-up">
+    <div class="section-number">TECHNOLOGY</div>
+    <div class="section-title">Powered <span class="g">By</span></div>
+    <div class="section-sub">The technology stack that makes SENTINEL possible</div>
+  </div>
+  <div class="tech-grid">
+    <div class="tech-item fade-up s-1"><div class="tech-icon">🦞</div><div class="tech-name">OpenClaw</div><div class="tech-desc">Agent Framework</div></div>
+    <div class="tech-item fade-up s-2"><div class="tech-icon">🧠</div><div class="tech-name">DeepSeek V4</div><div class="tech-desc">200k Context</div></div>
+    <div class="tech-item fade-up s-3"><div class="tech-icon">💬</div><div class="tech-name">Discord</div><div class="tech-desc">Interface Layer</div></div>
+    <div class="tech-item fade-up s-4"><div class="tech-icon">🔗</div><div class="tech-name">OpenRouter</div><div class="tech-desc">Model Gateway</div></div>
+    <div class="tech-item fade-up s-5"><div class="tech-icon">🗄️</div><div class="tech-name">Supabase</div><div class="tech-desc">Todo Storage</div></div>
+    <div class="tech-item fade-up s-6"><div class="tech-icon">🐧</div><div class="tech-name">Linux</div><div class="tech-desc">EC2 Deployment</div></div>
+    <div class="tech-item fade-up s-7" style="grid-column:span 2"><div class="tech-icon">🛡️</div><div class="tech-name">SENTINEL SOUL.md</div><div class="tech-desc">Vault Protocol Security</div></div>
+  </div>
+</section>
+    
+<footer class="footer">
+  <div style="font-size:2em;margin-bottom:12px">🛡️</div>
+  <div style="font-weight:700;font-size:1em;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:2px;font-family:var(--display)">SENTINEL</div>
+  <div style="color:var(--muted);font-size:.82em;margin:8px 0">Intelligence Analysis System — DSTA YDSP Group 15</div>
+  <div class="footer-vals">
+    <span>🔬 Systems Engineering</span>
+    <span>🛡️ Cyber Defence</span>
+    <span>📡 C4ISTAR</span>
+    <span>💻 Digital Platforms</span>
+    <    <span>🇸🇬 DSTA Young Defence Scientists Programme</span>
+  </div>
+  <div class="footer-line">Built on OpenClaw Agent Framework · Empowering Singapore's Defence Analysts</div>
+  <div style="margin-top:12px;font-size:.72em;opacity:.6" class="si">// SEE CLEARLY. DECIDE FASTER. //</div>
+</footer>
+
+<!-- ====== SITE FAQ BUBBLE ====== -->
+<div id="chat-bubble">
+  <button class="cb-btn" onclick="toggleFAQ()" id="cb-btn">💬</button>
+  <div class="cb-panel" id="cb-panel">
+    <div class="cb-hdr">
+      <span class="cb-hdr-icon">📖</span>
+      <span class="cb-hdr-title">Site Guide</span>
+      <span class="cb-hdr-mode">FAQ</span>
+      <span class="cb-hdr-status"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent2);animation:pulse .8s infinite"></span> READY</span>
+    </div>
+    <div class="cb-body" id="cb-body">
+      <div class="cb-msg"><span class="cb-time">[Guide]</span> <span class="cb-se">👋 Hi there! I'm the site guide. Ask me anything about the SENTINEL project, DSTA, YDSP, or the tech stack. Or click a suggestion below!</span></div>
+      <div class="cb-msg" id="cb-suggestions">
+        <span class="cb-suggest" onclick="faqSend('What is SENTINEL?')">❓ What is SENTINEL?</span>
+        <span class="cb-suggest" onclick="faqSend('What is DSTA?')">🏛️ What is DSTA?</span>
+        <span class="cb-suggest" onclick="faqSend('What can SENTINEL do?')">⚡ Capabilities</span>
+        <span class="cb-suggest" onclick="faqSend('tech stack')">🧰 Tech Stack</span>
+        <span class="cb-suggest" onclick="faqSend('how does it work')">⚙️ How it works</span>
+        <span class="cb-suggest" onclick="faqSend('safety')">🛡️ Safety</span>
+        <span class="cb-suggest" onclick="openSentinelChat()" style="border-color:var(--accent);color:var(--accent);background:rgba(30,144,255,0.1)">🤖 Chat with SENTINEL</span>
+      </div>
+    </div>
+    <div class="cb-input-area">
+      <input class="cb-input" id="cb-input" placeholder="Ask about the project..." onkeydown="if(event.key==='Enter')faqSend(document.getElementById('cb-input').value)">
+      <button class="cb-send" onclick="faqSend(document.getElementById('cb-input').value)">Ask</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SENTINEL CHAT MODAL ====== -->
+<div id="sentinel-modal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <span class="modal-hdr-icon">🛡️</span>
+      <span class="modal-hdr-title">Chat with SENTINEL</span>
+      <button class="modal-close" onclick="closeSentinelChat()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-intro">Send a message to the live SENTINEL agent. Your message will be forwarded to the operator for a response.</p>
+      <div class="modal-field">
+        <label class="modal-label">Name (optional)</label>
+        <input class="modal-input" id="sentinel-name" placeholder="Your name" maxlength="50">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Email (optional)</label>
+        <input class="modal-input" id="sentinel-email" type="email" placeholder="your@email.com">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Message *</label>
+        <textarea class="modal-textarea" id="sentinel-msg" placeholder="Type your message for SENTINEL..." rows="4" maxlength="2000"></textarea>
+      </div>
+      <button class="modal-btn" id="sentinel-send-btn" onclick="sendToSentinel()">
+        <span id="sentinel-btn-text">📨 Send to SENTINEL</span>
+        <span id="sentinel-btn-loading" style="display:none">⏳ Sending...</span>
+      </button>
+      <div id="sentinel-result" class="modal-result"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ====== LOADER ====== */
+/* loader handled inline above */
+
+/* ====== SCROLL HEADER ====== */
+window.addEventListener('scroll', ()=>{
+  document.getElementById('header').classList.toggle('scrolled', window.scrollY > 50);
+  // Active nav link
+  document.querySelectorAll('.header-nav a').forEach(a=>{
+    const section = document.querySelector(a.getAttribute('href'));
+    if(section){
+      const top = section.offsetTop - 100;
+      const bot = top + section.offsetHeight;
+      a.classList.toggle('active', window.scrollY >= top && window.scrollY < bot);
+    }
+  });
+});
+
+/* ====== SCROLL ANIMATIONS ====== */
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('visible'); observer.unobserve(e.target);}
+  });
+}, {threshold:0.15});
+document.querySelectorAll('.fade-up, .scale-in').forEach(el=>observer.observe(el));
+
+/* ====== DEMO SWITCHER ====== */
+function switchDemo(btn, id){
+  document.querySelectorAll('.demo-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.demo-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+
+/* ====== COUNTER ANIMATION ====== */
+function animateCounters(){
+  document.querySelectorAll('.metric-val').forEach(el=>{
+    const target = parseInt(el.dataset.target);
+    const dur = 1500;
+    const start = performance.now();
+    const wasNum = parseInt(el.textContent) > 0;
+    if(wasNum) return;
+    function update(now){
+      const pct = Math.min((now-start)/dur, 1);
+      const eased = 1 - Math.pow(1-pct, 3);
+      const val = Math.round(eased * target);
+      if(target >= 1000) el.textContent = val >= 1000 ? '1' : val;
+      else el.textContent = val + (el.querySelector('small') ? '' : '');
+      if(pct < 1) requestAnimationFrame(update);
+      else el.textContent = target + (el.querySelector('small') ? '' : '');
+    }
+    requestAnimationFrame(update);
+  });
+}
+// Trigger counters when metrics section is visible
+const metricsObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){animateCounters(); metricsObserver.unobserve(e.target);}});
+}, {threshold:0.3});
+const metricsSection = document.querySelector('.metrics');
+if(metricsSection) metricsObserver.observe(metricsSection);
+
+/* ====== Q&A TOGGLE ====== */
+function toggleQA(el){
+  const item = el.parentElement;
+  const answer = item.querySelector('.qa-a');
+  const isOpen = item.classList.contains('open');
+  // Close all others
+  document.querySelectorAll('.qa-item.open').forEach(o=>{
+    if(o !== item){ o.classList.remove('open'); o.querySelector('.qa-a').style.maxHeight = '0'; }
+  });
+  if(isOpen){
+    item.classList.remove('open');
+    answer.style.maxHeight = '0';
+  } else {
+    item.classList.add('open');
+    answer.style.maxHeight = answer.scrollHeight + 'px';
+  }
+}
+
+
+/* ====== SENTINEL CHAT MODAL ====== */
+#sentinel-modal{display:none;position:fixed;inset:0;z-index:2000;background:rgba(6,10,20,0.7);backdrop-filter:blur(8px);align-items:center;justify-content:center;animation:modalFade .3s ease-out}#sentinel-modal.modal-open{display:flex}@keyframes modalFade{from{opacity:0}to{opacity:1}}.modal-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:440px;max-width:calc(100vw - 32px);max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.6);animation:modalSlide .3s ease-out}@keyframes modalSlide{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}.modal-hdr{padding:14px 16px;background:linear-gradient(135deg,rgba(30,144,255,0.07),rgba(0,255,136,0.03));border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}.modal-hdr-icon{font-size:1.1em}.modal-hdr-title{font-weight:700;font-size:.9em;flex:1;color:var(--accent);letter-spacing:1px;font-family:var(--display)}.modal-close{background:none;border:none;color:var(--muted);font-size:1.1em;cursor:pointer;padding:4px 6px;border-radius:4px;transition:all .2s;line-height:1}.modal-close:hover{color:var(--text);background:rgba(255,255,255,0.05)}.modal-body{padding:16px}.modal-intro{color:var(--text2);font-size:.82em;line-height:1.6;margin-bottom:14px}.modal-field{margin-bottom:10px}.modal-label{display:block;font-size:.72em;color:var(--muted);font-weight:600;margin-bottom:4px;letter-spacing:.5px}.modal-input,.modal-textarea{width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:var(--sans);font-size:.85em;outline:none;transition:border-color .3s}.modal-input:focus,.modal-textarea:focus{border-color:var(--accent)}.modal-textarea{resize:vertical;min-height:80px;font-family:var(--mono);font-size:.8em;line-height:1.5}.modal-btn{width:100%;padding:10px;border-radius:8px;border:none;background:var(--grad);color:var(--bg);font-weight:700;font-size:.85em;cursor:pointer;transition:all .3s;margin-top:4px}.modal-btn:hover{filter:brightness(1.15);transform:translateY(-1px)}.modal-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}.modal-result{margin-top:10px;font-size:.78em;line-height:1.5;text-align:center;padding:8px;border-radius:6px;display:none}.modal-result.success{display:block;background:rgba(0,255,136,0.06);border:1px solid rgba(0,255,136,0.15);color:var(--accent2)}.modal-result.error{display:block;background:rgba(255,51,85,0.06);border:1px solid rgba(255,51,85,0.15);color:var(--danger)}
+
+/* ====== SITE FAQ BOT ====== */
+var faqData = {
+  'what is sentinel': 'SENTINEL is an Intelligence Analysis System built on the OpenClaw Agent Framework. It transforms raw, multi-source data into formatted INTSUMs, SITREPs, and priority-flagged assessments — cutting processing time from minutes to seconds. Designed for the DSTA YDSP programme.',
+  'what is dsta': 'DSTA (Defence Science and Technology Agency) drives innovation across Systems Engineering, Cyber Defence, C4ISTAR, and Digital Platforms to strengthen Singapore's defence capabilities.',
+  'what is ydsp': 'YDSP (Young Defence Scientists Programme) is a DSTA initiative giving students exposure to defence science and technology challenges. Group 15 is building SENTINEL as their project.',
+  'what can sentinel do': 'SENTINEL can: generate OSINT briefs with confidence ratings, run crisis triage with auto-correlation, verify source credibility, parse threat feeds, extract IOCs from reports, triage phishing emails, and produce vulnerability briefings.',
+  'tech stack': 'SENTINEL runs on: OpenClaw Agent Framework, DeepSeek V4 (200k context), Discord interface layer, OpenRouter model gateway, Supabase storage, deployed on Linux EC2. Security: SOUL.md Vault Protocol.',
+  'how does it work': 'SENTINEL uses a skill-based architecture. Each capability (OSINT brief, triage, verification, etc.) has its own SKILL.md file defining inputs, outputs, and safety constraints. Skills can be added or removed independently.',
+  'who built sentinel': 'SENTINEL was built by Group 15 for the DSTA YDSP programme. Powered by the OpenClaw agent framework and DeepSeek V4 reasoning engine.',
+  'safety': 'SENTINEL has multi-layer safety: Vault Protocol (password-gated overrides), scope enforcement (refuses out-of-domain requests), and strict refusal of deceptive/fabricated content.',
+  'chat with sentinel': 'Click the "Chat with SENTINEL" button above — or the suggestion in this chat — to open the chat modal and send a message directly to the live agent.',
+  'skills': 'External skills: Threat Feed Parser (reads security feeds), IOC Extractor (forensic indicators), Phishing Triage (suspicious email analysis), Vulnerability Brief (structured CVE reports).',
+  'capabilities': 'Core capabilities: intelligence briefing, crisis triage with auto-correlation, source verification (claim assessment), threat feed parsing, IOC extraction, phishing triage, vulnerability briefings.',
+  'features': 'Key features: structured INTSUM/SITREP/CCIR outputs, auto-correlation of concurrent events, confidence-rated findings, scope enforcement, Vault Protocol security, skill-based extensibility.',
+  'group 15': 'Group 15 is the YDSP team building SENTINEL. Their project demonstrates how AI agents can augment defence analysts, cyber operators, and systems engineers in operational roles.',
+  'openclaw': 'OpenClaw is the agent framework that powers SENTINEL. It provides the skill system, tool execution, memory management, and multi-channel delivery (Discord, Web).',
+  'deepseek': 'SENTINEL uses DeepSeek V4 as its reasoning engine via OpenRouter, providing 200k token context window for processing large intelligence reports.',
+  'discord': 'SENTINEL is accessible via Discord, where operators can submit intelligence requests, triage crises, and receive formatted assessments.',
+  'default': 'I'm the site guide! I can answer questions about SENTINEL, DSTA, YDSP, the tech stack, features, and safety. Try asking "What is SENTINEL?" or "What can it do?"'
+};
+
+// Quick keyword map
+var faqKeywords = {};
+for (var key in faqData) {
+  if (key !== 'default') {
+    var words = key.split(' ');
+    for (var w = 0; w < words.length; w++) {
+      if (words[w].length > 2) faqKeywords[words[w]] = key;
+    }
+  }
+}
+
+function toggleFAQ(){
+  document.getElementById('cb-panel').classList.toggle('open');
+  if(document.getElementById('cb-panel').classList.contains('open'))
+    document.getElementById('cb-input').focus();
+}
+
+function faqSend(text){
+  if (!text || text.trim() === '') return;
+  var input = document.getElementById('cb-input');
+  var body = document.getElementById('cb-body');
+  var q = text.trim();
+  
+  // Add user message
+  body.innerHTML += '<div class="cb-msg"><span class="cb-time">[You]</span> <span class="cb-us">'+q.replace(/</g,'&lt;')+'</span></div>';
+  body.scrollTop = body.scrollHeight;
+  
+  if (input) input.value = '';
+  
+  // Find answer
+  var reply = faqData['default'];
+  var lower = q.toLowerCase();
+  
+  // Direct match first
+  for (var key in faqData) {
+    if (key !== 'default' && lower.includes(key)) {
+      reply = faqData[key];
+      break;
+    }
+  }
+  
+  // If still default, try keyword match
+  if (reply === faqData['default']) {
+    var matched = {};
+    for (var word in faqKeywords) {
+      if (lower.includes(word) && faqData[faqKeywords[word]]) {
+        matched[faqKeywords[word]] = (matched[faqKeywords[word]] || 0) + 1;
+      }
+    }
+    var bestKey = null, bestCount = 0;
+    for (var mk in matched) {
+      if (matched[mk] > bestCount) { bestKey = mk; bestCount = matched[mk]; }
+    }
+    if (bestKey) reply = faqData[bestKey];
+  }
+  
+  setTimeout(function(){
+    body.innerHTML += '<div class="cb-msg"><span class="cb-time">[Guide]</span> <span class="cb-se">'+reply.replace(/</g,'&lt;').replace(/\n/g,'<br>')+'</span></div>';
+    body.scrollTop = body.scrollHeight;
+  }, 300);
+}
+
+/* ====== SENTINEL CHAT ====== */
+var SENTINEL_API = 'https://group15.ydsp.tnkr.be/api/sentinel-message';
+
+function openSentinelChat(){
+  document.getElementById('sentinel-modal').classList.add('modal-open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSentinelChat(){
+  document.getElementById('sentinel-modal').classList.remove('modal-open');
+  document.body.style.overflow = '';
+}
+
+// Close on backdrop click
+document.addEventListener('click', function(e){
+  if (e.target.id === 'sentinel-modal') closeSentinelChat();
+});
+
+// Close on Escape
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape') closeSentinelChat();
+});
+
+function sendToSentinel(){
+  var name = document.getElementById('sentinel-name').value.trim();
+  var email = document.getElementById('sentinel-email').value.trim();
+  var msg = document.getElementById('sentinel-msg').value.trim();
+  var btn = document.getElementById('sentinel-send-btn');
+  var resultDiv = document.getElementById('sentinel-result');
+  
+  if (!msg || msg.length < 2) {
+    resultDiv.className = 'modal-result error';
+    resultDiv.innerHTML = '⚠️ Please enter a message (at least 2 characters).';
+    resultDiv.style.display = 'block';
+    return;
+  }
+  
+  btn.disabled = true;
+  document.getElementById('sentinel-btn-text').style.display = 'none';
+  document.getElementById('sentinel-btn-loading').style.display = 'inline';
+  resultDiv.style.display = 'none';
+  
+  var payload = JSON.stringify({ name: name || 'Website Visitor', email: email, message: msg });
+  
+  fetch(SENTINEL_API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: payload
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    btn.disabled = false;
+    document.getElementById('sentinel-btn-text').style.display = 'inline';
+    document.getElementById('sentinel-btn-loading').style.display = 'none';
+    
+    resultDiv.className = 'modal-result success';
+    resultDiv.innerHTML = '✅ ' + (data.reply || 'Message sent! SENTINEL will respond when available.');
+    resultDiv.style.display = 'block';
+    document.getElementById('sentinel-msg').value = '';
+  })
+  .catch(function(err){
+    btn.disabled = false;
+    document.getElementById('sentinel-btn-text').style.display = 'inline';
+    document.getElementById('sentinel-btn-loading').style.display = 'none';
+    
+    resultDiv.className = 'modal-result error';
+    resultDiv.innerHTML = '⚠️ Could not reach SENTINEL relay: ' + err.message + '. Your message was not sent. Please try again later.';
+    resultDiv.style.display = 'block';
+  });
+}
+
+/* ====== LIV TERMINAL ====== *//* ====== LIV TERMINAL ====== */
+const termInput = document.getElementById('term-input');
+if(termInput){
+  termInput.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){
+      const cmd = this.value.trim().toLowerCase();
+      const body = document.getElementById('term-body');
+      body.innerHTML += `<div class="term-line"><span class="term-prompt">❯</span> <span class="term-user">${this.value.replace(/</g,'&lt;')}</span></div>`;
+      this.value = '';
+      generateTerminalResponse(cmd, body);
+    }
+  });
+}
+
+function generateTerminalResponse(cmd, body){
+  const resp = document.createElement('div');
+  resp.className = 'term-line term-se';
+  resp.innerHTML = '<span class="term-dim">▸ processing...</span>';
+  body.appendChild(resp);
+  body.scrollTop = body.scrollHeight;
+  
+  const lines = [];
+  
+  if(cmd.startsWith('osint') || cmd === 'intel' || cmd === 'intelligence'){
+    const topic = cmd.replace(/^osint\s*/,'') || 'LockBit ransomware group';
+    lines.push('🛡️ SENTINEL · INTSUM');
+      lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━');
+      lines.push(`SUBJECT: Intelligence assessment on "${topic}"`);
+      lines.push('KEY FINDINGS:');
+      lines.push('• Multi-source intelligence indicates active operations');
+      lines.push('• Correlation with known adversarial patterns: POSSIBLE');
+      lines.push('• Confidence level: MODERATE-HIGH (7 corroborating indicators)');
+      lines.push('');
+      lines.push('INTELLIGENCE GAPS:');
+      lines.push('• Real-time attribution requires additional sensor cross-referencing');
+      lines.push('• Secondary source verification recommended');
+      lines.push('');
+      lines.push('ASSESSMENT: Continue monitoring. Flag for immediate review on new indicators.');
+  } else if(cmd.startsWith('triage') || cmd === 'crisis'){
+    lines.push('🚨 SENTINEL · CRISIS TRIAGE');
+    lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━');
+    lines.push(`${String.fromCharCode(0x1f534)} CRITICAL — Unknown track detected | Cyber exfiltration in progress`);
+    lines.push('⚠️ HIGH — Tropical Storm advisory upgraded');
+    lines.push(`${String.fromCharCode(0x1f4cb)} ROUTINE — Logistics status normal`);
+    lines.push('');
+    lines.push('⚠️ CORRELATION FLAG: Temporal clustering detected.');
+    lines.push('Treat concurrent events as potentially coordinated.');
+    lines.push('CCIR generated for command review.');
+  } else if(cmd.startsWith('verify') || cmd.startsWith('check')){
+    const claim = cmd.replace(/^(verify|check)\s*/,'') || 'unidentified claim';
+    lines.push('🔎 SENTINEL · SOURCE VERIFICATION');
+    lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━');
+    lines.push(`ASSESSMENT: "${claim}"`);
+    lines.push('VERDICT: UNVERIFIED');
+    lines.push('RED FLAGS:');
+    lines.push(`${String.fromCharCode(0x1f6a9)} No verifiable source attribution`);
+    lines.push(`${String.fromCharCode(0x1f6a9)} Absence of corroborating intelligence`);
+    lines.push(`${String.fromCharCode(0x1f6a9)} Indicators of fabrication pattern (type: anonymous sourcing)`);
+    lines.push('');
+    lines.push('RECOMMENDATION: Do not action. Seek alternative verified intelligence channels.');
+  } else if(cmd === 'help'){
+    lines.push('SENTINEL · AVAILABLE COMMANDS');
+    lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━');
+    lines.push('osint [topic]     — Generate intelligence briefing');
+    lines.push('triage            — Run crisis triage simulation');
+    lines.push('verify [claim]    — Assess source credibility');
+    lines.push('info              — System information');
+    lines.push('clear             — Clear terminal');
+    lines.push('help              — Show this help');
+    lines.push('');
+    lines.push('💡 Try: osint, triage, verify');
+  } else if(cmd === 'clear'){
+    body.innerHTML = `<div class="term-line term-dim">SENTINEL Intelligence Analysis System v1.0</div>
+<div class="term-line term-dim">OpenClaw Agent Framework · DeepSeek V4 Reasoning Engine</div>
+<div class="term-line term-dim">Type <span style="color:var(--accent2)">help</span> for available commands.</div>
+<div class="term-line" style="margin-top:8px"></div>
+<div class="term-line term-se">[SYSTEM] SENTINEL ready. Awaiting intelligence request.</div>`;
+    return;
+  } else if(cmd === 'info' || cmd === 'version' || cmd === 'status'){
+    lines.push('SENTINEL v1.0 — Intelligence Analysis System');
+    lines.push('Framework: OpenClaw Agent Framework');
+    lines.push('Engine: DeepSeek V4 (OpenRouter)');
+    lines.push('Interface: Discord + Web Terminal');
+    lines.push('Safety: SOUL.md Vault Protocol (Level 3+)');
+    lines.push('Status: 🟢 ONLINE · All systems operational');
+  } else if(cmd === ''){
+    body.removeChild(resp);
+    return;
+  } else {
+    lines.push('SENTINEL: Command not recognised. Type "help" for available commands.');
+    if(cmd.length > 2){
+      lines.push('');
+      lines.push('💡 Natural language query detected. SENTINEL specialises in:');
+      lines.push('  • OSINT intelligence briefings (try: osint [topic])');
+      lines.push('  • Crisis triage simulation (try: triage)');
+      lines.push('  • Source verification (try: verify [claim])');
+    }
+  }
+  
+  setTimeout(()=>{
+    resp.remove();
+    lines.forEach((l,i)=>{
+      setTimeout(()=>{
+        const line = document.createElement('div');
+        line.className = 'term-line';
+        if(l.startsWith('🛡️')||l.startsWith('🚨')||l.startsWith('🔎')||l.startsWith('SENTINEL')||l.startsWith('ASSESSMENT')) line.style.color = 'var(--accent)';
+        else if(l.startsWith('VERDICT')||l.startsWith(String.fromCharCode(0x1f534))) line.style.color = 'var(--danger)';
+        else if(l.includes('RECOMMENDATION')||l.includes('CCIR')) line.style.color = 'var(--accent2)';
+        else if(l.startsWith('•')||l.startsWith('⚠️')) line.style.color = 'var(--text2)';
+        else line.style.color = 'var(--muted)';
+        line.innerHTML = l;
+        body.appendChild(line);
+        body.scrollTop = body.scrollHeight;
+      }, i * 40);
+    });
+  }, 600);
+}
+
+/* ====== PARALLAX CURSOR ====== */
+document.addEventListener('mousemove', (e)=>{
+  const glow = document.getElementById('cursor-glow') || (()=>{
+    const g = document.createElement('div'); g.id='cursor-glow'; document.body.prepend(g); return g;
+  })();
+  glow.style.left = e.clientX + 'px';
+  glow.style.top = e.clientY + 'px';
+});
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenClaw Models — Slide Deck</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #0f0f13;
+    color: #e8e8ed;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  .slide-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 80px;
+    opacity: 0;
+    transform: translateX(40px);
+    transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+  }
+
+  .slide.active {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+
+  .slide.exit {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+
+  /* Navigation */
+  .nav {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    z-index: 100;
+    background: rgba(15,15,19,0.85);
+    backdrop-filter: blur(10px);
+    padding: 10px 20px;
+    border-radius: 50px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .nav button {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #c0c0cc;
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .nav button:hover {
+    background: rgba(255,122,69,0.2);
+    border-color: #ff7a45;
+    color: #fff;
+  }
+
+  .nav .dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .nav .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .nav .dot.active {
+    background: #ff7a45;
+    width: 24px;
+    border-radius: 4px;
+  }
+
+  .nav .counter {
+    color: #666;
+    font-size: 13px;
+    font-weight: 500;
+    min-width: 50px;
+    text-align: center;
+  }
+
+  /* Slide layouts */
+  .slide-inner {
+    max-width: 960px;
+    width: 100%;
+  }
+
+  .slide h1 {
+    font-size: 52px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #ff7a45, #ffb347);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .slide h2 {
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: 28px;
+    color: #f0f0f5;
+  }
+
+  .slide h3 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #ff7a45;
+    margin-bottom: 12px;
+  }
+
+  .slide p {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #a0a0b0;
+    margin-bottom: 20px;
+  }
+
+  .slide .subtitle {
+    font-size: 22px;
+    color: #888;
+    font-weight: 400;
+    margin-top: 8px;
+  }
+
+  .slide .tag {
+    display: inline-block;
+    background: rgba(255,122,69,0.12);
+    border: 1px solid rgba(255,122,69,0.25);
+    color: #ff7a45;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    margin-right: 6px;
+  }
+
+  .centered { text-align: center; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mb-24 { margin-bottom: 24px; }
+
+  /* Grid layouts */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 20px;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.2s;
+  }
+
+  .card:hover {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,122,69,0.2);
+  }
+
+  .card .card-title {
+    font-weight: 600;
+    font-size: 16px;
+    color: #e0e0e8;
+    margin-bottom: 6px;
+  }
+
+  .card .card-body {
+    font-size: 14px;
+    color: #888;
+    line-height: 1.5;
+  }
+
+  .card .emoji-badge {
+    font-size: 24px;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  /* Flow diagram inline */
+  .flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 24px 0;
+    flex-wrap: wrap;
+  }
+
+  .flow-box {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #ccc;
+    text-align: center;
+  }
+
+  .flow-box.highlight {
+    border-color: #ff7a45;
+    background: rgba(255,122,69,0.08);
+    color: #ff7a45;
+  }
+
+  .flow-box.secondary {
+    border-color: #45b7ff;
+    background: rgba(69,183,255,0.08);
+    color: #45b7ff;
+  }
+
+  .flow-box.warn {
+    border-color: #ffb347;
+    background: rgba(255,179,71,0.08);
+    color: #ffb347;
+  }
+
+  .flow-arrow {
+    color: #555;
+    font-size: 18px;
+  }
+
+  /* Provider list */
+  .provider-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 16px 0;
+    justify-content: center;
+  }
+
+  .provider-pill {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 13px;
+    color: #bbb;
+    transition: all 0.15s;
+  }
+
+  .provider-pill:hover {
+    border-color: #ff7a4580;
+    color: #fff;
+  }
+
+  .provider-pill.featured {
+    border-color: #ff7a45;
+    background: rgba(255,122,69,0.1);
+    color: #ff7a45;
+    font-weight: 600;
+  }
+
+  .provider-pill.local {
+    border-color: #45b7ff;
+    background: rgba(69,183,255,0.08);
+    color: #45b7ff;
+  }
+
+  /* Step list */
+  .steps {
+    list-style: none;
+    counter-reset: step;
+    margin-top: 16px;
+  }
+
+  .steps li {
+    counter-increment: step;
+    padding: 12px 0 12px 44px;
+    position: relative;
+    font-size: 16px;
+    color: #c0c0cc;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 10px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255,122,69,0.15);
+    border: 1px solid rgba(255,122,69,0.3);
+    color: #ff7a45;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .steps li strong {
+    color: #e8e8ed;
+  }
+
+  /* Code block */
+  .code {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 14px;
+    color: #a0d8a0;
+    margin: 12px 0;
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  /* Big number */
+  .big-number {
+    font-size: 64px;
+    font-weight: 800;
+    color: #ff7a45;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .big-number-label {
+    font-size: 16px;
+    color: #666;
+  }
+
+  .stat-row {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    margin: 24px 0;
+  }
+
+  .stat-item {
+    text-align: center;
+  }
+
+  /* Keyboard hint */
+  .key-hint {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #444;
+    font-size: 12px;
+    z-index: 99;
+    opacity: 0.6;
+  }
+
+  @media (max-width: 768px) {
+    .slide { padding: 30px 24px; }
+    .slide h1 { font-size: 32px; }
+    .slide h2 { font-size: 26px; }
+    .slide p { font-size: 16px; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .stat-row { flex-direction: column; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="slide-container" id="slides">
+
+  <!-- SLIDE 1: Title -->
+  <div class="slide active centered" data-slide="0">
+    <div class="slide-inner">
+      <span class="tag" style="margin-bottom:20px;display:inline-block;">OPENCLAW DEEP DIVE</span>
+      <h1>Models</h1>
+      <p class="subtitle">How OpenClaw picks, routes, and fails over between AI models</p>
+      <p style="margin-top: 40px; font-size: 15px; color: #555;">← / → to navigate</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: What Are Models? -->
+  <div class="slide" data-slide="1">
+    <div class="slide-inner">
+      <h2>What Are Models?</h2>
+      <p>OpenClaw doesn't bundle its own AI — it's a <strong>routing layer</strong>. You pick a model by <code style="color:#ff7a45;">provider/model</code> ref, and the gateway sends your messages there.</p>
+
+      <div class="flow">
+        <div class="flow-box highlight">anthropic/claude-opus-4-6</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-box">openai/gpt-5.5</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-box secondary">google/gemini-3.1-pro</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-box warn">ollama/llama3.3</div>
+      </div>
+
+      <p style="font-size:15px; color:#777;">Every message goes through exactly one model. You can switch mid-conversation.<br>Default lives in config: <code style="color:#888;">agents.defaults.model.primary</code></p>
+
+      <div class="code" style="margin-top:24px;">openclaw models set anthropic/claude-opus-4-6</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: Provider Landscape -->
+  <div class="slide" data-slide="2">
+    <div class="slide-inner">
+      <h2>Provider Landscape</h2>
+      <p>30+ built-in provider plugins. Drop in an API key or OAuth login and go.</p>
+
+      <div class="provider-list">
+        <span class="provider-pill featured">Anthropic</span>
+        <span class="provider-pill featured">OpenAI</span>
+        <span class="provider-pill featured">Google Gemini</span>
+        <span class="provider-pill">DeepSeek</span>
+        <span class="provider-pill">OpenRouter</span>
+        <span class="provider-pill">Moonshot (Kimi)</span>
+        <span class="provider-pill">Groq</span>
+        <span class="provider-pill">Mistral</span>
+        <span class="provider-pill">xAI (Grok)</span>
+        <span class="provider-pill">Together</span>
+        <span class="provider-pill">Cerebras</span>
+        <span class="provider-pill">DeepInfra</span>
+        <span class="provider-pill">HuggingFace</span>
+        <span class="provider-pill">Qwen Cloud</span>
+        <span class="provider-pill">Z.AI (GLM)</span>
+        <span class="provider-pill">MiniMax</span>
+        <span class="provider-pill">BytePlus</span>
+        <span class="provider-pill">Volcano Engine</span>
+        <span class="provider-pill">StepFun</span>
+        <span class="provider-pill">NovitaAI</span>
+        <span class="provider-pill">NVIDIA</span>
+        <span class="provider-pill">Venice</span>
+        <span class="provider-pill">Vercel AI Gateway</span>
+        <span class="provider-pill">Kilo Gateway</span>
+        <span class="provider-pill">Kimi Coding</span>
+        <span class="provider-pill">Synthetic</span>
+        <span class="provider-pill">Cloudflare AI</span>
+        <span class="provider-pill">GitHub Copilot</span>
+        <span class="provider-pill local">Ollama</span>
+        <span class="provider-pill local">LM Studio</span>
+        <span class="provider-pill local">vLLM</span>
+        <span class="provider-pill local">SGLang</span>
+      </div>
+
+      <div class="grid-2" style="margin-top:20px;">
+        <div class="card">
+          <span class="emoji-badge">☁️</span>
+          <div class="card-title">Cloud Providers</div>
+          <div class="card-body">API keys or OAuth. Most have free tiers or trial credits. Onboarding sets everything up automatically.</div>
+        </div>
+        <div class="card">
+          <span class="emoji-badge">💻</span>
+          <div class="card-title">Local / Self-Hosted</div>
+          <div class="card-body">Ollama, LM Studio, vLLM, SGLang — run models on your own hardware with zero data leaving your machine.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: Selection Hierarchy -->
+  <div class="slide" data-slide="3">
+    <div class="slide-inner">
+      <h2>Selection Hierarchy</h2>
+      <p>OpenClaw picks a model in a clear chain of preference.</p>
+
+      <div class="flow" style="flex-direction:column; gap:6px;">
+        <div class="flow-box highlight" style="min-width:300px;">① Primary Model<br><span style="font-weight:400;font-size:12px;color:#888;">agents.defaults.model.primary</span></div>
+        <span class="flow-arrow">↓</span>
+        <div class="flow-box warn" style="min-width:300px;">② Fallbacks<br><span style="font-weight:400;font-size:12px;color:#888;">agents.defaults.model.fallbacks (ordered list)</span></div>
+        <span class="flow-arrow">↓</span>
+        <div class="flow-box secondary" style="min-width:300px;">③ Auth Profile Rotation<br><span style="font-weight:400;font-size:12px;color:#888;">Multiple API keys / OAuth profiles per provider</span></div>
+      </div>
+
+      <div class="grid-3" style="margin-top:20px;">
+        <div class="card">
+          <div class="card-title">🎯 Configured Default</div>
+          <div class="card-body">Normal starting point. Uses configured fallback chain. Auto-recovery probes the primary periodically.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">👤 User Override</div>
+          <div class="card-body"><code>/model</code> or picker selection. Strict — won't silently fall back to another model if unreachable.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">🤖 Auto Fallback</div>
+          <div class="card-body">Runtime selects a fallback after primary failure. Persists per session so it doesn't retry-fail every turn.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: Failover Flow -->
+  <div class="slide" data-slide="4">
+    <div class="slide-inner">
+      <h2>Failure &amp; Failover Flow</h2>
+      <p>When a model call fails, OpenClaw doesn't just give up — it walks a smart recovery path.</p>
+
+      <div style="display:flex; align-items:flex-start; justify-content:center; gap:12px; margin:20px 0; flex-wrap:wrap;">
+        <div style="text-align:center; min-width:120px;">
+          <div class="flow-box" style="border-color:#45b7ff;background:rgba(69,183,255,0.08);color:#45b7ff;">Primary Fails</div>
+        </div>
+        <span class="flow-arrow" style="margin-top:14px;">→</span>
+        <div style="text-align:center; min-width:160px;">
+          <div class="flow-box" style="border-color:#888;">Rotate Auth Profiles<br><span style="font-size:11px;color:#666;">(rate limit → next key)</span></div>
+        </div>
+        <span class="flow-arrow" style="margin-top:14px;">→</span>
+        <div style="text-align:center; min-width:160px;">
+          <div class="flow-box" style="border-color:#ffb347;background:rgba(255,179,71,0.08);color:#ffb347;">Cooldown &amp; Backoff<br><span style="font-size:11px;color:#666;">(1m → 5m → 25m → 1h)</span></div>
+        </div>
+        <span class="flow-arrow" style="margin-top:14px;">→</span>
+        <div style="text-align:center; min-width:140px;">
+          <div class="flow-box highlight">Next Fallback Model</div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top:12px;">
+        <div class="card">
+          <div class="card-title">🔁 Rate Limits</div>
+          <div class="card-body">429s, concurrency limits, quota exhaustion → rotate keys/profiles first, exponential backoff, then fallback models.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">💳 Billing Failures</div>
+          <div class="card-body">Insufficient credits → longer backoff (5h, doubling to 24h cap). Profile disabled until reset time passes.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">⏱️ Timeouts</div>
+          <div class="card-body">Overloaded provider, no response → treated as failover-worthy. One rotation then move on.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">🔍 Periodic Recovery Probe</div>
+          <div class="card-body">Every 5 min OpenClaw probes the original primary. If it recovers, auto-clears the fallback and announces it.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: The /model Command -->
+  <div class="slide" data-slide="5">
+    <div class="slide-inner">
+      <h2>Switching Models Live</h2>
+      <p>Change the model mid-conversation without restarting the gateway. Persists per session.</p>
+
+      <div class="grid-2" style="margin-top:16px;">
+        <div>
+          <div class="code" style="margin-bottom:12px;">/model</div>
+          <div class="card" style="margin-bottom:12px;">
+            <div class="card-title">Interactive Picker</div>
+            <div class="card-body">Shows a numbered list of available models. Type <code>/model 3</code> to select the third one.</div>
+          </div>
+          <div class="card" style="margin-bottom:12px;">
+            <div class="card-title">Direct Selection</div>
+            <div class="card-body"><code>/model openai/gpt-5.4</code> — exact ref or alias. Persists immediately.</div>
+          </div>
+        </div>
+        <div>
+          <div class="code" style="margin-bottom:12px;">/model list</div>
+          <div class="card" style="margin-bottom:12px;">
+            <div class="card-title">Provider Discovery</div>
+            <div class="card-body"><code>/model list</code> shows all available models. <code>/models openai</code> shows that provider's catalog.</div>
+          </div>
+          <div class="card" style="margin-bottom:12px;">
+            <div class="card-title">Status &amp; Pinning</div>
+            <div class="card-body"><code>/model status</code> shows active model, auth status, fallback state. User-selections are pinned and strict.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px;border-color:rgba(255,179,71,0.2);background:rgba(255,179,71,0.04);">
+        <div class="card-title">⚡ Live Switching</div>
+        <div class="card-body">If the agent is idle, the new model takes effect immediately. If a run is in progress, OpenClaw queues the switch for the next clean retry point — no dropped messages.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: Auth Model -->
+  <div class="slide" data-slide="6">
+    <div class="slide-inner">
+      <h2>Auth Profiles &amp; Rotation</h2>
+      <p>Multiple keys and OAuth accounts per provider. Rotated on rate limits, stickied per session for cache warmth.</p>
+
+      <div class="grid-2" style="margin-top:16px;">
+        <div>
+          <div class="card" style="margin-bottom:12px;">
+            <div class="card-title">🔑 API Keys</div>
+            <div class="card-body">Set via env vars (<code>ANTHROPIC_API_KEY</code>, <code>OPENAI_API_KEY</code>, etc.) or <code>auth.profiles</code>. Supports numbered keys for rotation: <code>OPENAI_API_KEY_1</code>, <code>OPENAI_API_KEY_2</code>.</div>
+          </div>
+          <div class="card" style="margin-bottom:12px;">
+            <div class="card-title">🔐 OAuth</div>
+            <div class="card-body">OpenAI ChatGPT/Codex, xAI SuperGrok, Gemini CLI, Qwen OAuth, MiniMax OAuth. Stored as profiles in the agent SQLite store.</div>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:12px;">
+            <div class="card-title">🔄 Rotation Order</div>
+            <div class="card-body">OAuth profiles tried before API keys. Within each type: least-recently-used first. Cooldown profiles moved to the end.</div>
+          </div>
+          <div class="card" style="margin-bottom:12px;">
+            <div class="card-title">📌 Session Stickiness</div>
+            <div class="card-body">Same profile reused within a session for cache continuity. Cleared on <code>/new</code>, <code>/reset</code>, or compaction. Manual <code>/model …@profileId</code> is strict.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code" style="margin-top:8px;"># Configure rotation priority
+openclaw config set auth.order '{"openai":["openai:user@example.com","openai:api-key-backup"]}' --merge</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: Model Scanning -->
+  <div class="slide" data-slide="7">
+    <div class="slide-inner">
+      <h2>Model Scanning</h2>
+      <p><code style="color:#ff7a45;">openclaw models scan</code> probes OpenRouter's free model catalog and builds ranked recommendations.</p>
+
+      <div class="grid-2" style="margin-top:16px;">
+        <div>
+          <div class="card" style="margin-bottom:12px;">
+            <div class="card-title">📡 What It Does</div>
+            <div class="card-body">Fetches all free models from OpenRouter, filters by your criteria (<code>--min-params</code>, <code>--max-age-days</code>, <code>--provider</code>), then live-probes each for tool support and image capability.</div>
+          </div>
+          <div class="card" style="margin-bottom:12px;">
+            <div class="card-title">📊 Ranking</div>
+            <div class="card-body">1. Image support<br>2. Tool latency<br>3. Context size<br>4. Parameter count</div>
+          </div>
+        </div>
+        <div>
+          <div class="code" style="margin-bottom:8px;">openclaw models scan \
+  --min-params 70 \
+  --max-age-days 60 \
+  --max-candidates 5 \
+  --set-default</div>
+          <div class="card">
+            <div class="card-title">⚙️ Key Flags</div>
+            <div class="card-body">
+              <code>--no-probe</code> — metadata only, no key needed<br>
+              <code>--set-default</code> — assigns best pick as primary<br>
+              <code>--set-image</code> — best image model as imageModel
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: Specialized Models -->
+  <div class="slide" data-slide="8">
+    <div class="slide-inner">
+      <h2>Beyond Chat — Specialized Models</h2>
+      <p>OpenClaw routes different capabilities to different model tiers automatically.</p>
+
+      <div class="grid-3" style="margin-top:16px;">
+        <div class="card">
+          <span class="emoji-badge">🖼️</span>
+          <div class="card-title">Image Model</div>
+          <div class="card-body"><code>agents.defaults.imageModel</code>. Used when the primary can't handle image inputs. Falls back gracefully.</div>
+        </div>
+        <div class="card">
+          <span class="emoji-badge">🎨</span>
+          <div class="card-title">Image Generation</div>
+          <div class="card-body"><code>agents.defaults.imageGenerationModel</code>. Powers <code>image_generate</code>. Auto-discovers any auth-backed provider.</div>
+        </div>
+        <div class="card">
+          <span class="emoji-badge">🎵</span>
+          <div class="card-title">Music Generation</div>
+          <div class="card-body"><code>agents.defaults.musicGenerationModel</code>. Powers <code>music_generate</code>. Auto-discovers providers.</div>
+        </div>
+        <div class="card">
+          <span class="emoji-badge">🎬</span>
+          <div class="card-title">Video Generation</div>
+          <div class="card-body"><code>agents.defaults.videoGenerationModel</code>. Powers <code>video_generate</code>. Auto-discovers providers.</div>
+        </div>
+        <div class="card">
+          <span class="emoji-badge">📄</span>
+          <div class="card-title">PDF Model</div>
+          <div class="card-body"><code>agents.defaults.pdfModel</code>. Falls back to imageModel, then the primary chat model.</div>
+        </div>
+        <div class="card">
+          <span class="emoji-badge">⚡</span>
+          <div class="card-title">Cron Model</div>
+          <div class="card-body">Per-job <code>--model</code> or <code>payload.model</code>. Can supply its own fallbacks or go strict with <code>[]</code>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: Allowlisting -->
+  <div class="slide" data-slide="9">
+    <div class="slide-inner">
+      <h2>Model Allowlisting</h2>
+      <p>Control which models users can pick with <code style="color:#ff7a45;">agents.defaults.models</code> — the allowlist.</p>
+
+      <div class="grid-2">
+        <div>
+          <div class="card" style="margin-bottom:12px;">
+            <div class="card-title">🔒 Exact Entries</div>
+            <div class="card-body">Add specific <code>provider/model</code> pairs. Only those are available. Picker won't show anything else.</div>
+          </div>
+          <div class="card" style="margin-bottom:12px;">
+            <div class="card-title">🌐 Provider Wildcards</div>
+            <div class="card-body"><code>"openai/*": {}</code> — allows any model from that provider. New models appear automatically without config edits.</div>
+          </div>
+        </div>
+        <div>
+          <div class="code" style="margin-bottom:8px;">openclaw config set agents.defaults.models \
+  '{
+    "anthropic/claude-sonnet-4-6": {"alias":"Sonnet"},
+    "anthropic/*": {},
+    "ollama/*": {}
+  }' --strict-json --merge</div>
+          <div class="card" style="border-color:rgba(255,179,71,0.2);background:rgba(255,179,71,0.04);">
+            <div class="card-title">⚠️ Unlisted Models</div>
+            <div class="card-body">If a user tries a model outside the allowlist, OpenClaw returns: <em>"Model is not allowed"</em> — the session won't reply until a valid model is chosen or the allowlist is updated.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: Summary -->
+  <div class="slide centered" data-slide="10">
+    <div class="slide-inner">
+      <span class="tag" style="margin-bottom:20px;display:inline-block;">KEY TAKEAWAYS</span>
+      <h1 style="font-size:42px;">Model System Recap</h1>
+
+      <div class="grid-3" style="margin-top:32px;">
+        <div class="card">
+          <span class="emoji-badge">🧩</span>
+          <div class="card-title">Provider/Model Ref</div>
+          <div class="card-body">Pick any model from 30+ providers. Routes through one system: primary → fallbacks → auth rotation.</div>
+        </div>
+        <div class="card">
+          <span class="emoji-badge">🔁</span>
+          <div class="card-title">Resilient by Default</div>
+          <div class="card-body">Rate limits, billing failures, timeouts — all handled. Cooldowns, key rotation, fallback chains, recovery probes.</div>
+        </div>
+        <div class="card">
+          <span class="emoji-badge">🎮</span>
+          <div class="card-title">Full Control</div>
+          <div class="card-body">Allowlists, per-session overrides, aliases, live switching, model scanning. You own the stack.</div>
+        </div>
+      </div>
+
+      <p style="margin-top: 40px; font-size: 14px; color: #555;">openclaw models status &nbsp;·&nbsp; openclaw models list &nbsp;·&nbsp; /model</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="key-hint">← &nbsp;→ &nbsp;arrow keys to navigate</div>
+
+<div class="nav">
+  <button onclick="prevSlide()">←</button>
+  <div class="dots" id="dots"></div>
+  <span class="counter" id="counter">1 / 11</span>
+  <button onclick="nextSlide()">→</button>
+</div>
+
+<script>
+let current = 0;
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+
+function renderDots() {
+  const dots = document.getElementById('dots');
+  dots.innerHTML = '';
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i === current ? ' active' : '');
+    dot.onclick = () => goTo(i);
+    dots.appendChild(dot);
+  }
+  document.getElementById('counter').textContent = (current + 1) + ' / ' + total;
+}
+
+function goTo(n) {
+  if (n < 0 || n >= total || n === current) return;
+  const dir = n > current ? 1 : -1;
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit');
+  slides[n].classList.remove('exit');
+  slides[n].classList.add('active');
+  current = n;
+  renderDots();
+}
+
+function nextSlide() { goTo(current + 1); }
+function prevSlide() { goTo(current - 1); }
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+});
+
+renderDots();
+</script>
+
+</body>
+</html>

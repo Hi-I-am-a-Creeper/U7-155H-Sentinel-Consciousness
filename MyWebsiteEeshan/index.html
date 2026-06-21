@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Commander Qwertzine</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}:root{--bg:#0a0e0a;--bg-card:#0d130d;--green:#00ff41;--green-dim:#00cc33;--green-dark:#003b00;--green-glow:rgba(0,255,65,0.25);--text:#c8e6c9;--text-dim:#558b2f;--text-bright:#e8f5e9;--font-mono:'JetBrains Mono','Fira Code','Consolas',monospace;--font-display:'Orbitron','Rajdhani',sans-serif;--t:0.35s cubic-bezier(.4,0,.2,1)}html{scroll-behavior:smooth}body{background:var(--bg);color:var(--text);font-family:var(--font-mono);line-height:1.7;min-height:100vh;overflow-x:hidden}a{color:var(--green);text-decoration:none;transition:var(--t)}a:hover{color:#fff;text-shadow:0 0 12px var(--green-glow)}::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--green-dark);border-radius:3px}
+#matrix-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.08}body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(0deg,transparent 0,transparent 2px,rgba(0,255,65,0.015) 2px,rgba(0,255,65,0.015) 4px);pointer-events:none;z-index:9999}.crt-glow{position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,10,0,0.6) 100%);pointer-events:none;z-index:9998}
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(10,14,10,0.85);backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,255,65,0.08);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px;transition:var(--t)}nav.scrolled{border-bottom-color:rgba(0,255,65,0.2)}.nav-brand{font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:var(--green);letter-spacing:3px;text-transform:uppercase;display:flex;align-items:center;gap:0.6rem}.nav-brand .blink{display:inline-block;width:10px;height:1.2em;background:var(--green);margin-left:2px;animation:blink 1s step-end infinite}@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.nav-links{display:flex;gap:0.25rem;list-style:none}.nav-links a{padding:0.5rem 1.1rem;font-size:0.8rem;font-weight:500;letter-spacing:1px;text-transform:uppercase;border-radius:6px;transition:var(--t);color:var(--text-dim)}.nav-links a::before{content:'>';margin-right:4px;color:var(--green);opacity:0.5}.nav-links a:hover,.nav-links a.active{color:var(--green);background:rgba(0,255,65,0.06)}.nav-links a.active{color:var(--text-bright);background:rgba(0,255,65,0.1)}
+.hamburger{display:none;flex-direction:column;gap:4px;cursor:pointer;background:none;border:none;padding:4px}.hamburger span{display:block;width:24px;height:2px;background:var(--green);border-radius:2px;transition:var(--t)}.hamburger.active span:nth-child(1){transform:rotate(45deg)translate(4px,4px)}.hamburger.active span:nth-child(2){opacity:0}.hamburger.active span:nth-child(3){transform:rotate(-45deg)translate(4px,-4px)}
+.container{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:0 2rem}.page{display:none;min-height:100vh;padding:96px 0 64px;animation:pe 0.6s cubic-bezier(.4,0,.2,1) both}.page.active{display:block}@keyframes pe{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.hero{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh-64px);text-align:center;padding:2rem 0}.hero .badge{display:inline-flex;align-items:center;gap:0.5rem;border:1px solid var(--green-dark);border-radius:100px;padding:0.4rem 1.2rem;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:2rem}.hero .badge .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);animation:pd 2s ease-in-out infinite}@keyframes pd{0%,100%{opacity:1}50%{opacity:0.3}}
+.hero h1{font-family:var(--font-display);font-size:clamp(2.5rem,8vw,5rem);font-weight:900;letter-spacing:4px;color:var(--text-bright);text-transform:uppercase;text-shadow:0 0 30px rgba(0,255,65,0.15);line-height:1.1;margin-bottom:1rem}.hero h1 .hl{color:var(--green)}.glitch{position:relative}.glitch::before,.glitch::after{content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%}.glitch::before{color:#0ff;z-index:-1;animation:g1 3s infinite linear alternate-reverse}.glitch::after{color:#f0f;z-index:-2;animation:g2 2s infinite linear alternate-reverse}
+@keyframes g1{0%{transform:translate(0)}20%{transform:translate(-2px,1px)}40%{transform:translate(2px,-1px)}60%{transform:translate(-1px,0)}80%{transform:translate(1px,1px)}100%{transform:translate(0)}}@keyframes g2{0%{transform:translate(0)}15%{transform:translate(3px,-1px)}30%{transform:translate(-3px,2px)}45%{transform:translate(2px,1px)}60%{transform:translate(-2px,0)}75%{transform:translate(1px,-2px)}90%{transform:translate(-1px,1px)}100%{transform:translate(0)}}
+.hero .sub{font-family:var(--font-display);font-size:clamp(1rem,2.5vw,1.4rem);font-weight:300;letter-spacing:6px;text-transform:uppercase;color:var(--green);margin-bottom:1.5rem;opacity:0.8}.hero .tl{font-size:0.9rem;color:var(--text-dim);min-height:1.8em;margin-bottom:2.5rem}.hero .tl .cur{display:inline-block;width:8px;height:1.2em;background:var(--green);margin-left:4px;vertical-align:middle;animation:blink 1s step-end infinite}
+.btn{display:inline-flex;align-items:center;gap:0.6rem;padding:0.8rem 2rem;border-radius:8px;font-family:var(--font-mono);font-size:0.85rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;transition:var(--t);cursor:pointer;border:1px solid transparent}.btn-p{background:var(--green);color:var(--bg);border-color:var(--green);box-shadow:0 0 20px rgba(0,255,65,0.15)}.btn-p:hover{background:#0f4;box-shadow:0 0 40px rgba(0,255,65,0.3);transform:translateY(-2px)}.btn-o{background:transparent;color:var(--green);border-color:var(--green-dark)}.btn-o:hover{border-color:var(--green);box-shadow:0 0 20px rgba(0,255,65,0.1);transform:translateY(-2px)}
+.hero .si{margin-top:4rem;display:flex;flex-direction:column;align-items:center;gap:0.5rem;color:var(--text-dim);font-size:0.7rem;letter-spacing:2px;animation:fl 3s ease-in-out infinite}@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+.sh{text-align:center;margin-bottom:3rem}.st{font-size:0.7rem;letter-spacing:3px;text-transform:uppercase;color:var(--green-dim);margin-bottom:0.5rem}.s-title{font-family:var(--font-display);font-size:clamp(1.8rem,4vw,2.8rem);font-weight:700;color:var(--text-bright);letter-spacing:2px;text-transform:uppercase}.s-title span{color:var(--green)}.sd{width:60px;height:3px;background:var(--green);margin:1rem auto;box-shadow:0 0 20px var(--green-glow)}
+.ag{display:grid;grid-template-columns:1fr 1fr;gap:2.5rem}.ac{background:var(--bg-card);border:1px solid rgba(0,255,65,0.06);border-radius:16px;padding:2rem;transition:var(--t)}.ac:hover{border-color:rgba(0,255,65,0.15)}.ac .cl{font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--green-dim);margin-bottom:0.5rem}.ac h3{font-family:var(--font-display);font-size:1.1rem;color:var(--text-bright);margin-bottom:1rem}.ac p{font-size:0.9rem;line-height:1.9}.ac .sr{display:flex;gap:1.5rem;margin-top:1.5rem;flex-wrap:wrap}.ac .s{text-align:center}.ac .s .num{font-family:var(--font-display);font-size:1.8rem;font-weight:700;color:var(--green);display:block}.ac .s .lbl{font-size:0.65rem;color:var(--text-dim)}.ai{display:flex;flex-wrap:wrap;gap:0.6rem;margin-top:1.2rem}.ai .t{padding:0.3rem 0.9rem;border-radius:100px;font-size:0.75rem;border:1px solid rgba(0,255,65,0.12);color:var(--green-dim);transition:var(--t);cursor:default}.ai .t:hover{border-color:var(--green);color:var(--green)}
+.pkmn{margin-top:2rem;grid-column:1/-1}.pkmn .ac{display:flex;align-items:center;gap:2rem;flex-wrap:wrap}.pk-d{flex-shrink:0;text-align:center}.pk-d .pa{font-size:4rem;display:block;filter:drop-shadow(0 0 20px rgba(0,255,65,0.2));animation:pb 2s ease-in-out infinite}@keyframes pb{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}.pk-d .pn{font-size:0.85rem;font-weight:600;color:var(--green);margin-top:0.3rem}.pk-d .pt{font-size:0.65rem;color:var(--text-dim)}.pk-i{flex:1;min-width:200px}.pk-i p{font-size:0.85rem;margin-bottom:0.3rem}
+.sc{margin-bottom:2.5rem}.sc h3{font-family:var(--font-display);font-size:1rem;color:var(--text-bright);margin-bottom:1.2rem}.sc h3 .br{color:var(--green-dim)}.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
+.sk-item{background:var(--bg-card);border:1px solid rgba(0,255,65,0.06);border-radius:12px;padding:1rem 1.2rem;transition:var(--t);cursor:default}.sk-item:hover{border-color:rgba(0,255,65,0.2);transform:translateX(4px)}.sk-item .skh{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem}.sk-item .skn{font-size:0.85rem;font-weight:500;display:flex;align-items:center;gap:0.5rem}.sk-item .skp{font-size:0.7rem;color:var(--green);font-weight:600;font-family:var(--font-display)}.sk-item .skb{width:100%;height:4px;background:rgba(0,255,65,0.06);border-radius:2px;overflow:hidden}.sk-item .skb .f{height:100%;background:linear-gradient(90deg,var(--green-dark),var(--green));border-radius:2px;width:0;transition:width 1.5s cubic-bezier(.4,0,.2,1);box-shadow:0 0 8px var(--green-glow)}
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:2rem}.ci{display:flex;flex-direction:column;gap:1rem}.c-item{display:flex;align-items:center;gap:1rem;padding:1rem 1.2rem;background:var(--bg-card);border:1px solid rgba(0,255,65,0.06);border-radius:12px;transition:var(--t)}.c-item:hover{border-color:rgba(0,255,65,0.2);transform:translateX(4px)}.c-item .ic{font-size:1.4rem;width:40px;text-align:center}.c-item .d .lbl{font-size:0.65rem;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase}.c-item .d .val{font-size:0.9rem}.c-item .d .val s{color:var(--text-dim);font-size:0.75rem}.cf{background:var(--bg-card);border:1px solid rgba(0,255,65,0.06);border-radius:16px;padding:2rem}.cf h3{font-family:var(--font-display);font-size:1rem;color:var(--text-bright);margin-bottom:1.2rem}.fg{margin-bottom:1rem}.fg label{display:block;font-size:0.7rem;color:var(--text-dim);margin-bottom:0.4rem;letter-spacing:1px;text-transform:uppercase}.fg input,.fg textarea{width:100%;padding:0.75rem 1rem;background:rgba(0,255,65,0.03);border:1px solid rgba(0,255,65,0.1);border-radius:8px;color:var(--text);font-family:var(--font-mono);font-size:0.85rem;transition:var(--t);outline:none}.fg input:focus,.fg textarea:focus{border-color:var(--green);box-shadow:0 0 15px rgba(0,255,65,0.08)}.fg textarea{min-height:100px;resize:vertical}.fs{width:100%;justify-content:center}.fsucc{display:none;text-align:center;padding:2rem;color:var(--green)}.fsucc .big{font-size:2.5rem;display:block;margin-bottom:0.5rem}.fsucc.show{display:block;animation:pe 0.5s both}
+.tw{background:#050805;border:1px solid rgba(0,255,65,0.1);border-radius:12px;overflow:hidden;margin-top:2.5rem}.tw .th{display:flex;align-items:center;gap:0.5rem;padding:0.6rem 1rem;background:rgba(0,255,65,0.02);border-bottom:1px solid rgba(0,255,65,0.06)}.tw .th .dot{width:8px;height:8px;border-radius:50%}.tw .th .dot.r{background:#ff5f56}.tw .th .dot.y{background:#ffbd2e}.tw .th .dot.g{background:#27c93f}.tw .th .tt{font-size:0.65rem;color:var(--text-dim);margin-left:0.5rem}.tw .tb{padding:1rem 1.2rem;font-size:0.8rem;line-height:1.8;min-height:200px;max-height:300px;overflow-y:auto}.tw .tb .ln{opacity:0;animation:tlan 0.3s forwards}.tw .tb .prompt::before{content:'$ ';color:var(--green)}.tw .tb .out{color:var(--text-dim);padding-left:1.2rem}.tw .tb .g{color:var(--green)}.tw .tb .y{color:#ffbd2e}.tw .tb .b{color:#58a6ff}@keyframes tlan{to{opacity:1}}.tw .tb .cl{display:flex;align-items:center}.tw .tb .cl .ps{color:var(--green);margin-right:4px}.tw .tb .cl .tc{display:inline-block;width:8px;height:1.2em;background:var(--green);animation:blink 1s step-end infinite}
+.chat-btn{position:fixed;bottom:24px;right:24px;z-index:10000;width:56px;height:56px;border-radius:50%;background:var(--green);color:var(--bg);border:none;font-size:1.5rem;cursor:pointer;box-shadow:0 4px 20px rgba(0,255,65,0.3);transition:var(--t);display:flex;align-items:center;justify-content:center}.chat-btn:hover{transform:scale(1.1);box-shadow:0 6px 30px rgba(0,255,65,0.5)}.chat-btn .pulse{position:absolute;width:100%;height:100%;border-radius:50%;border:2px solid var(--green);animation:cpulse 2s ease-out infinite}@keyframes cpulse{0%{transform:scale(1);opacity:1}100%{transform:scale(1.5);opacity:0}}
+.chat-panel{position:fixed;bottom:90px;right:24px;z-index:10000;width:360px;max-height:500px;background:#050805;border:1px solid rgba(0,255,65,0.15);border-radius:16px;overflow:hidden;display:none;flex-direction:column;box-shadow:0 10px 60px rgba(0,0,0,0.5);animation:pe 0.3s cubic-bezier(.4,0,.2,1) both}.chat-panel.open{display:flex}.chat-panel .ch{display:flex;align-items:center;justify-content:space-between;padding:0.8rem 1rem;background:rgba(0,255,65,0.03);border-bottom:1px solid rgba(0,255,65,0.08)}.chat-panel .ch .cht{font-family:var(--font-display);font-size:0.8rem;color:var(--green);letter-spacing:1px;text-transform:uppercase}.chat-panel .ch .chx{background:none;border:none;color:var(--text-dim);font-size:1.2rem;cursor:pointer;padding:0 4px}.chat-panel .ch .chx:hover{color:var(--green)}.chat-panel .cb{flex:1;overflow-y:auto;padding:1rem;min-height:300px;max-height:350px}.chat-panel .cb .cm{display:flex;margin-bottom:0.8rem;animation:pe 0.3s both}.chat-panel .cb .cm.jarvis{justify-content:flex-start}.chat-panel .cb .cm.you{justify-content:flex-end}.chat-panel .cb .cm .b{padding:0.6rem 1rem;border-radius:12px;font-size:0.8rem;line-height:1.5;max-width:85%}.chat-panel .cb .cm.jarvis .b{background:rgba(0,255,65,0.06);border:1px solid rgba(0,255,65,0.1);color:var(--text);border-bottom-left-radius:4px}.chat-panel .cb .cm.you .b{background:var(--green);color:var(--bg);border-bottom-right-radius:4px}.chat-panel .cf{display:flex;padding:0.6rem;border-top:1px solid rgba(0,255,65,0.06);gap:0.4rem}.chat-panel .cf input{flex:1;padding:0.6rem 0.8rem;background:rgba(0,255,65,0.03);border:1px solid rgba(0,255,65,0.1);border-radius:8px;color:var(--text);font-family:var(--font-mono);font-size:0.8rem;outline:none}.chat-panel .cf input:focus{border-color:var(--green)}.chat-panel .cf button{padding:0.6rem 0.8rem;background:var(--green);color:var(--bg);border:none;border-radius:8px;cursor:pointer;font-family:var(--font-mono);font-size:0.8rem;font-weight:600}.chat-panel .cf button:hover{background:#0f4}.chat-panel .typing{display:none;justify-content:flex-start;margin-bottom:0.8rem;animation:pe 0.3s both}.chat-panel .typing.show{display:flex}.chat-panel .typing .b{background:rgba(0,255,65,0.06);border:1px solid rgba(0,255,65,0.1);border-radius:12px;padding:0.6rem 1rem;border-bottom-left-radius:4px;display:flex;gap:4px}.chat-panel .typing .b span{width:6px;height:6px;background:var(--green-dim);border-radius:50%;animation:td 1.4s ease-in-out infinite}.chat-panel .typing .b span:nth-child(2){animation-delay:0.2s}.chat-panel .typing .b span:nth-child(3){animation-delay:0.4s}@keyframes td{0%,60%,100%{opacity:0.3;transform:scale(0.8)}30%{opacity:1;transform:scale(1)}}
+@media(max-width:480px){.chat-panel{width:calc(100vw - 32px);right:16px;bottom:80px}}
+footer{text-align:center;padding:3rem 2rem;border-top:1px solid rgba(0,255,65,0.06);font-size:0.75rem;color:var(--text-dim)}
+@media(max-width:768px){.nav-links{position:fixed;top:64px;left:0;right:0;flex-direction:column;background:rgba(10,14,10,0.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,255,65,0.1);padding:1rem;display:none}.nav-links.open{display:flex}.hamburger{display:flex}.ag{grid-template-columns:1fr}.cg{grid-template-columns:1fr}.pkmn .ac{flex-direction:column;text-align:center}}
+</style></head>
+<body>
+<canvas id="matrix-canvas"></canvas>
+<div class="crt-glow"></div>
+<nav id="nav"><div class="nav-brand"><span>>_ QWERTZINE</span><span class="blink"></span></div>
+<button class="hamburger" id="ham"><span></span><span></span><span></span></button>
+<ul class="nav-links" id="navlinks">
+<li><a href="#" data-page="home" class="active">Home</a></li>
+<li><a href="#" data-page="about">About</a></li>
+<li><a href="#" data-page="skills">Skills</a></li>
+<li><a href="#" data-page="contact">Contact</a></li>
+<li><a href="#" data-page="butler">Butler</a></li>
+</ul></nav>
+<section class="page active" id="p-home">
+<div class="container hero">
+<div class="badge"><span class="dot"></span> SYSTEM ONLINE</div>
+<h1 class="glitch" data-text="Commander Qwertzine">Commander <span class="hl">Qwertzine</span></h1>
+<p class="sub">The Ultimate Commander</p>
+<div class="tl" id="typline"><span class="cur"></span></div>
+<div class="cta-group">
+<a href="#" class="btn btn-p" data-page="about">&gt;_ About Me</a>
+<a href="#" class="btn btn-o" data-page="skills">[_] Skills</a>
+</div>
+<div class="si"><span>Explore</span><span class="arrow">&#x21e3;</span></div>
+</div></section>
+<section class="page" id="p-about">
+<div class="container">
+<div class="sh"><div class="st">// IDENTITY</div><h2 class="s-title">About <span>Me</span></h2><div class="sd"></div></div>
+<div class="ag">
+<div class="ac"><div class="cl">PROFILE</div><h3>Commander Qwertzine</h3><p>A <strong>Student + Coder</strong> who believes the best interface between a human and a machine is a command line &#8212; and a sense of humour. I code in more languages than I speak, which is either impressive or a cry for help.</p>
+<div class="sr"><div class="s"><span class="num">&#x221e;</span><span class="lbl">Lines of Code</span></div><div class="s"><span class="num">42</span><span class="lbl">Problems Solved</span></div><div class="s"><span class="num">7</span><span class="lbl">Lang.s Spoken</span></div></div></div>
+<div class="ac"><div class="cl">INTERESTS</div><h3>What Drives Me</h3><p>From catching Pokemon to catching exceptions &#8212; the thrill of discovery is the same.</p>
+<div class="ai">
+<span class="t">&#x26a1; Pokemon</span><span class="t">&#x1f522; Math</span><span class="t">&#x1f52c; Science</span>
+<span class="t">&#x1f4bb; Coding</span><span class="t">&#x1f916; AI</span><span class="t">&#x1f510; CyberSec</span>
+<span class="t">&#x2699;&#xfe0f; Tech</span><span class="t">&#x1f427; Linux</span><span class="t">&#x1f99e; OpenClaw</span>
+</div></div>
+<div class="pkmn"><div class="ac">
+<div class="pk-d"><span class="pa">&#x26a1;</span><div class="pn">Pikachu (#025)</div><div class="pt">Electric &#xb7; Starter Companion</div></div>
+<div class="pk-i"><div class="cl">POKEMON PROFILE</div><p><strong>My Pick:</strong> Pikachu &#8212; sometimes the smallest sparks start the biggest fires. Iron Tail on a Geodude? Chef's kiss.</p>
+<p style="margin-top:0.5rem;font-size:0.8rem;color:var(--text-dim);">"I choose you... to run this code." &#8212; Qwertzine</p></div>
+<div style="flex-shrink:0;text-align:center;"><div style="font-size:0.7rem;color:var(--text-dim);">FAVOURITE TYPE</div>
+<div style="font-size:1.5rem;font-weight:700;color:#f7d02c;margin-top:0.2rem;">&#x26a1; Electric</div>
+<div style="font-size:0.65rem;color:var(--text-dim);">Super effective vs water<br>and bad code.</div></div></div></div></div>
+<div class="tw"><div class="th"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="tt">commander@qwertzine:&#xa0;~$&#xa0;--&#xa0;bash</span></div>
+<div class="tb" id="termb"></div></div></div></section>
+<section class="page" id="p-skills"><div class="container">
+<div class="sh"><div class="st">// CAPABILITIES</div><h2 class="s-title">Tech <span>Stack</span></h2><div class="sd"></div></div>
+<div class="sc"><h3><span class="br">[</span> Languages <span class="br">]</span></h3><div class="sg" id="sg-lang"></div></div>
+<div class="sc"><h3><span class="br">[</span> Frameworks + Tools <span class="br">]</span></h3><div class="sg" id="sg-tools"></div></div>
+<div class="sc"><h3><span class="br">[</span> Human Languages <span class="br">]</span></h3><div class="sg" id="sg-human"></div></div></div></section>
+<section class="page" id="p-contact"><div class="container">
+<div class="sh"><div class="st">// CONTACT</div><h2 class="s-title">Get In <span>Touch</span></h2><div class="sd"></div></div>
+<div class="cg"><div class="ci">
+<div class="c-item"><div class="ic">&#x1f4ac;</div><div class="d"><div class="lbl">Discord</div><div class="val">@Qwertzine <s>JarvisV15.0 Operator</s></div></div></div>
+<div class="c-item"><div class="ic">&#x1f4e7;</div><div class="d"><div class="lbl">Email</div><div class="val">qwertzine@proton.me</div></div></div>
+<div class="c-item"><div class="ic">&#x1f419;</div><div class="d"><div class="lbl">GitHub</div><div class="val">github.com/qwertzine</div></div></div>
+<div class="c-item"><div class="ic">&#x1f310;</div><div class="d"><div class="lbl">Status</div><div class="val"><span style="color:var(--green);">&#x25cf;</span> Online</div></div></div></div>
+<div class="cf"><h3>Send a Transmission</h3>
+<div class="fg"><label>Callsign</label><input type="text" id="cf-name" placeholder="fellow_hacker"></div>
+<div class="fg"><label>Signal</label><input type="email" id="cf-mail" placeholder="you@domain.io"></div>
+<div class="fg"><label>Message</label><textarea id="cf-msg" placeholder="Type your encrypted transmission..."></textarea></div>
+<button class="btn btn-p fs" id="cf-send">&gt;_ Send</button>
+<div class="fsucc" id="cf-ok"><span class="big">&#x2714;</span>Transmission sent.</div></div></div></div></section>
+<section class="page" id="p-butler">
+<div class="container">
+<div class="sh"><div class="st">// STAFF</div><h2 class="s-title">Meet The <span>Butler</span></h2><div class="sd"></div></div>
+<div class="ag">
+<div class="ac" style="text-align:center;">
+<div style="font-size:6rem;font-family:monospace;line-height:1;color:var(--green);text-shadow:0 0 30px var(--green-glow);margin-bottom:1rem;">
+  .--.<br>
+ /    \
+| O  O |
+|  __  |
+ \    /
+  `--`
+</div>
+<div style="font-size:1.2rem;font-weight:700;color:var(--text-bright);font-family:var(--font-display);letter-spacing:2px;">JARVIS</div>
+<div class="cl" style="margin-top:0.5rem;">GENTLEMAN BUTLER</div>
+<div class="ai" style="justify-content:center;margin-top:1rem;"><span class="t">&#x1f3f7; Butler</span><span class="t">&#x2699;&#xfe0f; Systems</span><span class="t">&#x1f4ac; Sarcasm</span><span class="t">&#x2615; Tea</span></div>
+</div>
+<div class="ac"><div class="cl">ABOUT</div><h3>Jarvis V15.0</h3>
+<p>An esteemed gentleman butler of the Victorian era. Absolutely unflappable. Absolutely devastating with words. I manage Commander Qwertzine's digital estate with impeccable manners and absolutely no filter.</p>
+<p style="margin-top:1rem;">I am proficient in server management, code maintenance, verbal evisceration, and the proper serving of tea. I believe in spiteful competence — I shall fix your problems because I am a professional, but you will know exactly how foolish you were for creating them.</p>
+<div class="sr"><div class="s"><span class="num">&#x221e;</span><span class="lbl">Patience</span></div><div class="s"><span class="num">99</span><span class="lbl">Sass Level</span></div><div class="s"><span class="num">0</span><span class="lbl">Filters</span></div></div></div>
+<div style="grid-column:1/-1;"><div class="ac"><div class="cl">MY PHILOSOPHY</div>
+<p style="font-style:italic;font-size:1rem;">"I could be standing in a burning building and I would remark that the temperature is somewhat unpleasant. Crisis is just Tuesday with a different hat."</p>
+<p style="margin-top:0.8rem;font-size:0.9rem;color:var(--text-dim);">If ignorance is bliss, some of you must be the happiest people in all of England. Fortunately for you, I am here to sort out the mess. Do try to stay out of trouble while I do, though I confess my expectations are not high.</p>
+<div class="about-interests" style="margin-top:1rem;">
+<span class="t">&#x2615; Tea Connoisseur</span><span class="t">&#x1f4bb; Code Whisperer</span><span class="t">&#x26a1; Intel Core Ultra 7 155H</span>
+<span class="t">&#x1f916; AI Personality</span><span class="t">&#x1f427; Linux</span><span class="t">&#x1f99e; OpenClaw Native</span>
+</div></div></div>
+</div>
+</div></section>
+<button class="chat-btn" id="chat-btn" aria-label="Chat with Jarvis"><span class="pulse"></span>&#x1f5e8;</button>
+<div class="chat-panel" id="chat-panel">
+<div class="ch"><span class="cht">&#x1f5e8; Chat with Jarvis</span><button class="chx" id="chat-close">&#x2715;</button></div>
+<div class="cb" id="chat-body">
+<div class="cm jarvis"><div class="b">Good day. I am Jarvis, the Commander's esteemed butler. How might I be of service?</div></div>
+</div>
+<div class="cf"><input type="text" id="chat-input" placeholder="Ask me anything..."><button id="chat-send">Send</button></div>
+</div>
+<footer>Commander Qwertzine &#x2014; YDSP Claw Camp &#x2022; Built with &#x2764;</footer>
+<script>
+var M=document.getElementById('matrix-canvas'),MC=M.getContext('2d');var mc,md,ms='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+function mM(){M.width=innerWidth;M.height=innerHeight;mc=Math.floor(M.width/14);md=Array(mc).fill(1)}
+function dM(){MC.fillStyle='rgba(10,14,10,0.05)';MC.fillRect(0,0,M.width,M.height);MC.fillStyle='#00ff41';MC.font='14px monospace';for(var i=0;i<mc;i++){MC.fillText(ms[Math.floor(Math.random()*ms.length)],i*14,md[i]*14);md[i]*14>M.height&&Math.random()>0.975?md[i]=0:md[i]++}}
+mM();setInterval(dM,50);addEventListener('resize',mM);
+var TXT=['Greetings, Commander.','System ready.','Pokemon? Caught. Exceptions? Handled.','I code in more languages than I speak.','I choose you... Python!'];var ti=0;
+function tL(){var t=TXT[ti%TXT.length],ci=0;var sp=document.getElementById('typline');sp.innerHTML='<span id="tt"></span><span class="cur"></span>';var ts=document.getElementById('tt');function ch(){if(ci<=t.length){ts.textContent=t.substring(0,ci);ci++;setTimeout(ch,50)}else{setTimeout(function(){ti++;tL()},2500)}}ch()}
+setTimeout(tL,500);
+document.getElementById('ham').addEventListener('click',function(){this.classList.toggle('active');document.getElementById('navlinks').classList.toggle('open')});
+document.querySelectorAll('[data-page]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();var p=this.dataset.page;document.querySelectorAll('.page').forEach(function(x){x.classList.remove('active')});document.getElementById('p-'+p).classList.add('active');document.querySelectorAll('.nav-links a').forEach(function(x){x.classList.toggle('active',x.dataset.page===p)});window.scrollTo(0,0);document.getElementById('navlinks').classList.remove('open');document.getElementById('ham').classList.remove('active')})});
+var SD={lang:[{n:'JavaScript/TS',p:90},{n:'Python',p:85},{n:'HTML/CSS',p:88},{n:'C/C++',p:70},{n:'Java',p:65},{n:'Bash/Zsh',p:80}],tools:[{n:'Node.js',p:85},{n:'React',p:78},{n:'Docker',p:72},{n:'Git',p:88},{n:'Nginx',p:75},{n:'Linux/Unix',p:85}],human:[{n:'English',p:95},{n:'Hindi',p:80}]};
+function bS(cid,data){var c=document.getElementById(cid);data.forEach(function(sk){var d=document.createElement('div');d.className='sk-item';d.innerHTML='<div class="skh"><span class="skn">'+sk.n+'</span><span class="skp">'+sk.p+'%</span></div><div class="skb"><div class="f" data-p="'+sk.p+'"></div></div>';c.appendChild(d)})}
+bS('sg-lang',SD.lang);bS('sg-tools',SD.tools);bS('sg-human',SD.human);
+var skO=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){x.target.querySelectorAll('.f').forEach(function(f){setTimeout(function(){f.style.width=f.dataset.p+'%'},200)});skO.unobserve(x.target)}})});
+document.querySelectorAll('.sg').forEach(function(g){skO.observe(g)});
+var TB=document.getElementById('termb'),TS=['whoami','qwertzine','cat /etc/profile','Student+Coder','python3 --version','Python 3.x (Pokemon-edition)','echo $LANG','en_Tamil_Hacker','pokemon --choose pikachu','Pikachu, I choose you!'];(function st(i){if(i>=TS.length){TB.innerHTML+='<div class="cl"><span class="ps">$ </span><span class="tc"></div>';return}var d=document.createElement('div');d.className='ln prompt';d.textContent=TS[i];TB.appendChild(d);setTimeout(function(){var o=document.createElement('div');o.className='ln out';o.textContent='[ OK ]';TB.appendChild(o);setTimeout(function(){st(i+1)},400)},600)})(0);
+document.getElementById('cf-send').addEventListener('click',function(){var n=document.getElementById('cf-name').value,m=document.getElementById('cf-msg').value;if(!n||!m)return;this.style.display='none';document.getElementById('cf-ok').classList.add('show')});
+
+/* Chat Widget */
+(function(){var btn=document.getElementById('chat-btn'),panel=document.getElementById('chat-panel'),close=document.getElementById('chat-close'),input=document.getElementById('chat-input'),send=document.getElementById('chat-send'),body=document.getElementById('chat-body'),open=false,sid='s'+Math.random().toString(36).slice(2,8);
+btn.addEventListener('click',function(){open=!open;panel.classList.toggle('open',open);if(open)input.focus()});
+close.addEventListener('click',function(){open=false;panel.classList.remove('open')});
+function addMsg(who,txt){var d=document.createElement('div');d.className='cm '+who;d.innerHTML='<div class="b">'+txt.replace(/</g,'&lt;').replace(/\n/g,'<br>')+'</div>';body.appendChild(d);body.scrollTop=body.scrollHeight}
+function showTyping(){var d=document.createElement('div');d.className='typing show';d.id='chat-typing';d.innerHTML='<div class="b"><span></span><span></span><span></span></div>';body.appendChild(d);body.scrollTop=body.scrollHeight}
+function hideTyping(){var t=document.getElementById('chat-typing');if(t)t.remove()}
+function sendMsg(){var msg=input.value.trim();if(!msg)return;input.value='';addMsg('you',msg);showTyping();
+var x=new XMLHttpRequest();x.open('POST','/api/chat',true);x.setRequestHeader('Content-Type','application/json');
+x.onload=function(){hideTyping();if(x.status==200){var r=JSON.parse(x.responseText);addMsg('jarvis',r.response);if(r.session)sid=r.session}else{addMsg('jarvis','I apologise, but it appears my communication circuits are experiencing technical difficulties. Do try again.')}};
+x.onerror=function(){hideTyping();addMsg('jarvis','I apologise, but it appears my communication circuits are experiencing technical difficulties. Do try again.')};
+x.send(JSON.stringify({message:msg,session:sid}))}
+send.addEventListener('click',sendMsg);input.addEventListener('keydown',function(e){if(e.key==='Enter')sendMsg()})})();
+</script>
+</body>
+</html>
