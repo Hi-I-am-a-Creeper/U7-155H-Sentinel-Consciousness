@@ -1,6 +1,5 @@
 # Sensitive / credentials
 state/
-.openclaw/
 .clawhub/
 logs/
 __pycache__/
